@@ -19,25 +19,27 @@ function SearchBar() {
   const [activeDropdown, setActiveDropdown] = useState(null);
   const [isSticky, setIsSticky] = useState(false);
   const searchBarRef = useRef(null);
+  const guestMenuRef = useRef(null);
 
   const regions = [
-    { name: "I'm flexible", icon: "world-map.png" },
-    { name: "Europe", icon: "europe-map.png" },
-    { name: "Italy", icon: "italy-map.png" },
-    { name: "Southeast Asia", icon: "southeast-asia-map.png" },
-    { name: "United Arab Emirates", icon: "uae-map.png" },
-    { name: "Middle East", icon: "middle-east-map.png" },
+    { name: "Jaipur", icon: "/src/assets/outliers/MAPjaipur.png" },
+    { name: "Bikaner", icon: "/src/assets/outliers/MAPbikaner.png" },
+    { name: "Jaisalmer", icon: "/src/assets/outliers/MAPjaisalmer.png" },
+    { name: "Jodhpur", icon: "/src/assets/outliers/MAPjodhpur.png" },
+    { name: "Udaipur", icon: "/src/assets/outliers/MAPudaipur.png" },
+    { name: "Anywhere in Rajasthan", icon: "/src/assets/outliers/MAPrajasthan.png" },
   ];
 
   useEffect(() => {
     function handleClickOutside(event) {
       if (searchBarRef.current && !searchBarRef.current.contains(event.target)) {
-        setActiveDropdown(null);
+        if (!(guestMenuRef.current && guestMenuRef.current.contains(event.target))) {
+          setActiveDropdown(null);
+        }
       }
     }
 
     function handleScroll() {
-      setActiveDropdown(null);
       const scrollPosition = window.scrollY;
       setIsSticky(scrollPosition > 100);
     }
@@ -69,9 +71,9 @@ function SearchBar() {
   };
 
   return (
-    <div className="relative">
+    <div className={`relative ${isSticky ? 'fixed top-0 left-0 right-0 z-50' : ''}`}>
       <motion.div 
-        className="bg-white shadow-lg rounded-full p-2 mb-2 max-w-4xl mx-auto"
+        className={`bg-white shadow-lg rounded-full p-2 mb-2 max-w-4xl mx-auto ${isSticky ? 'mt-4' : ''}`}
         initial={{ opacity: 0, y: -20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.5 }}
@@ -95,7 +97,7 @@ function SearchBar() {
             placeholderText="When?"
             onFocus={() => handleInputFocus('checkIn')}
             isActive={activeDropdown === 'checkIn'}
-            className="w-full sm:w-1/3 mb-2 sm:mb-0"
+            className="w-full sm:w-1/3 mb-2 sm:mb-0 rounded-full hover:bg-gray-100 transition-colors duration-200"
           />
           <Divider className="hidden sm:block" />
           <GuestInput
@@ -118,16 +120,37 @@ function SearchBar() {
       </motion.div>
       <AnimatePresence>
         {activeDropdown === 'destination' && (
-          <RegionDropdown 
-            regions={regions} 
-            onSelect={(region) => {
-              setSelectedDestination(region);
-              setActiveDropdown(null);
-            }} 
-          />
+          <motion.div
+            initial={{ opacity: 0, y: -10 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -10 }}
+            transition={{ duration: 0.2 }}
+            className="absolute left-0 right-0 z-10 mt-2"
+          >
+            <div className="bg-white shadow-lg rounded-lg max-w-4xl mx-auto">
+              <RegionDropdown 
+                regions={regions} 
+                onSelect={(region) => {
+                  setSelectedDestination(region);
+                  setActiveDropdown(null);
+                }} 
+              />
+            </div>
+          </motion.div>
         )}
         {activeDropdown === 'guests' && (
-          <GuestMenu guests={guests} onGuestChange={handleGuestChange} />
+          <motion.div
+            initial={{ opacity: 0, y: -10 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -10 }}
+            transition={{ duration: 0.2 }}
+            className="absolute left-0 right-0 z-10 mt-2"
+            ref={guestMenuRef}
+          >
+            <div className="bg-white shadow-lg rounded-lg max-w-4xl mx-auto">
+              <GuestMenu guests={guests} onGuestChange={handleGuestChange} />
+            </div>
+          </motion.div>
         )}
       </AnimatePresence>
     </div>

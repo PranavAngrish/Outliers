@@ -1,19 +1,86 @@
-import React from 'react';
-import DatePicker from 'react-datepicker';
+import React, { useState, useEffect, useRef } from 'react';
+import { DayPicker } from 'react-day-picker';
+import 'react-day-picker/dist/style.css';
 
-const DateInput = ({ icon, selected, onChange, placeholderText, onFocus, isActive }) => (
-  <div className="relative flex-grow group">
-    <div className="absolute left-3 top-1/2 transform -translate-y-1/2">
-      {icon}
+const ModernDateInput = ({ icon, selected, onChange, placeholderText, onFocus, isActive }) => {
+  const [isOpen, setIsOpen] = useState(false);
+  const wrapperRef = useRef(null);
+  const inputRef = useRef(null);
+
+  const handleDayClick = (day) => {
+    onChange(day);
+    setIsOpen(false);
+  };
+
+  const handleClickOutside = (event) => {
+    if (wrapperRef.current && !wrapperRef.current.contains(event.target)) {
+      setIsOpen(false);
+    }
+  };
+
+  const handleScroll = () => {
+    setIsOpen(false);
+  };
+
+  useEffect(() => {
+    document.addEventListener('mousedown', handleClickOutside);
+    document.addEventListener('scroll', handleScroll, true);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+      document.removeEventListener('scroll', handleScroll, true);
+    };
+  }, []);
+
+  const handleInputClick = (e) => {
+    e.preventDefault();
+    setIsOpen(!isOpen);
+    onFocus();
+  };
+
+  const disablePastDates = (date) => {
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    return date < today;
+  };
+
+  return (
+    <div className="relative" ref={wrapperRef}>
+      <div 
+        className={`flex items-center p-2 cursor-pointer ${
+          isActive ? 'bg-gray-100' : ''
+        } hover:bg-gray-100 transition-colors duration-200 rounded-full`}
+      >
+        <span className="mr-2 pointer-events-none">{icon}</span>
+        <input
+          ref={inputRef}
+          type="text"
+          readOnly
+          value={selected ? selected.toLocaleDateString() : ''}
+          placeholder={placeholderText}
+          className="w-full bg-transparent focus:outline-none cursor-pointer"
+          onClick={handleInputClick}
+        />
+      </div>
+      {isOpen && (
+        <div className="absolute z-50 mt-1 bg-white shadow-lg rounded-lg overflow-hidden" style={{ top: '100%', left: 0 }}>
+          <DayPicker
+            mode="single"
+            selected={selected}
+            onSelect={handleDayClick}
+            disabled={disablePastDates}
+            modifiers={{
+              selected: selected,
+              today: new Date(),
+            }}
+            modifiersStyles={{
+              selected: { backgroundColor: '#3b82f6', color: 'white' },
+              today: { fontWeight: 'bold' },
+            }}
+          />
+        </div>
+      )}
     </div>
-    <DatePicker
-      selected={selected}
-      onChange={onChange}
-      placeholderText={placeholderText}
-      className={`w-full pl-10 pr-4 py-2 bg-transparent focus:outline-none group-hover:bg-gray-100 rounded-full transition-colors duration-200 ${isActive ? 'text-black' : 'text-gray-500'}`}
-      onFocus={onFocus}
-    />
-  </div>
-);
+  );
+};
 
-export default DateInput;
+export default ModernDateInput;

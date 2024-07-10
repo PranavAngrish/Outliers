@@ -9,7 +9,7 @@ const RegionDropdown = ({ regions, onSelect }) => (
     exit={{ opacity: 0, y: -10 }}
     transition={{ duration: 0.2 }}
   >
-    <h3 className="text-lg font-semibold mb-4">Search by region</h3>
+    <h3 className="text-lg font-semibold mb-4">Search by City</h3>
     <div className="grid grid-cols-3 gap-4">
       {regions.map((region) => (
         <div

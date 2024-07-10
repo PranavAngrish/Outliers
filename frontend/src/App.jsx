@@ -1,11 +1,11 @@
-import React from 'react';
+import React from "react";
 
-import FirstPage from './components/firstPage.jsx';
+import FirstPage from "./components/firstPage.jsx";
 
-import PopularPlaces from './components/PopularPlaces.jsx';
-import ExploreDestinations from './components/ExploreDestinations.jsx';
-import Gallery from './components/Gallery.jsx';
-import Footer from './components/Footer.jsx';
+import PopularPlaces from "./components/PopularPlaces.jsx";
+import ExploreDestinations from "./components/ExploreDestinations.jsx";
+import Gallery from "./components/Gallery.jsx";
+import Footer from "./components/Footer.jsx";
 
 function App() {
   return (

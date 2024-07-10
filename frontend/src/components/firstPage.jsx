@@ -1,21 +1,26 @@
-import React, { useState, useRef, useEffect } from 'react';
-import { FaSearch, FaCalendarAlt, FaUserFriends, FaBars } from 'react-icons/fa';
+import React, { useState, useRef, useEffect } from "react";
+import { FaSearch, FaCalendarAlt, FaUserFriends, FaBars } from "react-icons/fa";
 import "react-datepicker/dist/react-datepicker.css";
-import { motion, AnimatePresence } from 'framer-motion';
-import SearchInput from './SearchBar/SearchInput';
-import DateInput from './SearchBar/DateInput';
-import GuestInput from './SearchBar/GuestInput';
-import RegionDropdown from './SearchBar/RegionDropdown';
-import GuestMenu from './SearchBar/GuestMenu';
+import { motion, AnimatePresence } from "framer-motion";
+import SearchInput from "./SearchBar/SearchInput";
+import DateInput from "./SearchBar/DateInput";
+import GuestInput from "./SearchBar/GuestInput";
+import RegionDropdown from "./SearchBar/RegionDropdown";
+import GuestMenu from "./SearchBar/GuestMenu";
 
 const NavItem = ({ href, children }) => (
-  <a href={href} className="text-sm lg:text-base text-white hover:text-orange-300 transition-colors duration-300 hover:underline">
+  <a
+    href={href}
+    className="text-sm lg:text-base text-white hover:text-[#EC4899] transition-colors duration-300 hover:underline"
+  >
     {children}
   </a>
 );
 
 const NavButton = ({ className, children }) => (
-  <button className={`px-3 py-1 lg:px-4 lg:py-2 text-sm lg:text-base rounded-full transition duration-300 transform hover:scale-105 ${className}`}>
+  <button
+    className={`px-3 py-1 lg:px-4 lg:py-2 text-sm lg:text-base rounded-full transition duration-300 transform hover:scale-105 ${className}`}
+  >
     {children}
   </button>
 );
@@ -23,25 +28,40 @@ const NavButton = ({ className, children }) => (
 const Navbar = () => {
   const [showMobileMenu, setShowMobileMenu] = useState(false);
 
-  const navItems = ['Experiences', 'Destinations', 'About Us', 'Contact Us'];
+  const navItems = ["Experiences", "Destinations", "About Us", "Contact Us"];
 
   return (
     <>
       <nav className="flex justify-between items-center py-6">
         <div className="flex items-center">
-          <img src="/src/assets/outliers/logo.jpg" alt="logo" className="h-10 w-10 sm:h-12 sm:w-12 mr-2 transition-transform duration-300 hover:scale-110" />
-          <span className="text-lg sm:text-xl font-bold text-white">The Outliers Co</span>
+          <img
+            src="/src/assets/outliers/logo.jpg"
+            alt="logo"
+            className="h-10 w-10 sm:h-12 sm:w-12 mr-2 transition-transform duration-300 hover:scale-110"
+          />
+          <span className="text-lg sm:text-xl font-bold text-white">
+            The Outliers Co
+          </span>
         </div>
         <div className="hidden md:flex justify-center space-x-4 lg:space-x-8">
           {navItems.map((item, index) => (
-            <NavItem key={index} href="#">{item}</NavItem>
+            <NavItem key={index} href="#">
+              {item}
+            </NavItem>
           ))}
         </div>
         <div className="hidden md:flex space-x-2 lg:space-x-4">
-          <NavButton className="bg-white text-black hover:bg-gray-200">Host An Experience!</NavButton>
-          <NavButton className="bg-orange-500 text-white hover:bg-orange-600">Login</NavButton>
+          <NavButton className="bg-white text-black hover:bg-gray-200">
+            Host An Experience!
+          </NavButton>
+          <NavButton className="bg-orange-500 text-white hover:bg-orange-600">
+            Login
+          </NavButton>
         </div>
-        <button onClick={() => setShowMobileMenu(!showMobileMenu)} className="md:hidden text-white">
+        <button
+          onClick={() => setShowMobileMenu(!showMobileMenu)}
+          className="md:hidden text-white"
+        >
           <FaBars className="text-xl" />
         </button>
       </nav>
@@ -49,10 +69,20 @@ const Navbar = () => {
       {showMobileMenu && (
         <div className="md:hidden bg-white shadow-md rounded-lg p-4 mb-4">
           {navItems.map((item, index) => (
-            <a key={index} href="#" className="block py-2 text-black hover:text-orange-600 transition-colors duration-300">{item}</a>
+            <a
+              key={index}
+              href="#"
+              className="block py-2 text-black hover:text-[#EC4899] transition-colors duration-300"
+            >
+              {item}
+            </a>
           ))}
-          <NavButton className="w-full bg-black text-white hover:bg-gray-800 mt-2">Host An Experience!</NavButton>
-          <NavButton className="w-full bg-orange-500 text-white hover:bg-orange-600 mt-2">Login</NavButton>
+          <NavButton className="w-full bg-black text-white hover:bg-gray-800 mt-2">
+            Host An Experience!
+          </NavButton>
+          <NavButton className="w-full bg-orange-500 text-white hover:bg-orange-600 mt-2">
+            Login
+          </NavButton>
         </div>
       )}
     </>
@@ -60,7 +90,7 @@ const Navbar = () => {
 };
 
 const SearchBar = () => {
-  const [selectedDestination, setSelectedDestination] = useState('');
+  const [selectedDestination, setSelectedDestination] = useState("");
   const [checkInDate, setCheckInDate] = useState(null);
   const [guests, setGuests] = useState({ adults: 0, children: 0, infants: 0 });
   const [activeDropdown, setActiveDropdown] = useState(null);
@@ -74,13 +104,19 @@ const SearchBar = () => {
     { name: "Jaisalmer", icon: "/src/assets/outliers/MAPjaisalmer.png" },
     { name: "Jodhpur", icon: "/src/assets/outliers/MAPjodhpur.png" },
     { name: "Udaipur", icon: "/src/assets/outliers/MAPudaipur.png" },
-    { name: "Anywhere in Rajasthan", icon: "/src/assets/outliers/MAPrajasthan.png" },
+    {
+      name: "Anywhere in Rajasthan",
+      icon: "/src/assets/outliers/MAPrajasthan.png",
+    },
   ];
 
   useEffect(() => {
     const handleClickOutside = (event) => {
-      if (searchBarRef.current && !searchBarRef.current.contains(event.target) &&
-          !(guestMenuRef.current && guestMenuRef.current.contains(event.target))) {
+      if (
+        searchBarRef.current &&
+        !searchBarRef.current.contains(event.target) &&
+        !(guestMenuRef.current && guestMenuRef.current.contains(event.target))
+      ) {
         setActiveDropdown(null);
       }
     };
@@ -99,13 +135,16 @@ const SearchBar = () => {
   }, []);
 
   const handleGuestChange = (type, increment) => {
-    setGuests(prevGuests => ({
+    setGuests((prevGuests) => ({
       ...prevGuests,
-      [type]: Math.max(0, prevGuests[type] + increment)
+      [type]: Math.max(0, prevGuests[type] + increment),
     }));
   };
 
-  const totalGuests = Object.values(guests).reduce((sum, count) => sum + count, 0);
+  const totalGuests = Object.values(guests).reduce(
+    (sum, count) => sum + count,
+    0
+  );
 
   const handleInputFocus = (inputName) => {
     setActiveDropdown(inputName);
@@ -116,9 +155,15 @@ const SearchBar = () => {
   };
 
   return (
-    <div className={`relative ${isSticky ? 'fixed top-0 left-0 right-0 z-50' : ''}`}>
-      <motion.div 
-        className={`bg-white shadow-lg rounded-full p-2 mb-2 max-w-4xl mx-auto ${isSticky ? 'mt-4' : ''}`}
+    <div
+      className={`relative ${
+        isSticky ? "fixed top-0 left-0 right-0 z-50" : ""
+      }`}
+    >
+      <motion.div
+        className={`bg-white shadow-lg rounded-full p-2 mb-2 max-w-4xl mx-auto ${
+          isSticky ? "mt-4" : ""
+        }`}
         initial={{ opacity: 0, y: -20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.5 }}
@@ -130,8 +175,8 @@ const SearchBar = () => {
             placeholder="Search destinations"
             value={selectedDestination}
             onChange={setSelectedDestination}
-            onFocus={() => handleInputFocus('destination')}
-            isActive={activeDropdown === 'destination'}
+            onFocus={() => handleInputFocus("destination")}
+            isActive={activeDropdown === "destination"}
             className="w-full sm:w-1/3 mb-2 sm:mb-0"
           />
           <Divider className="hidden sm:block" />
@@ -140,16 +185,16 @@ const SearchBar = () => {
             selected={checkInDate}
             onChange={setCheckInDate}
             placeholderText="When?"
-            onFocus={() => handleInputFocus('checkIn')}
-            isActive={activeDropdown === 'checkIn'}
+            onFocus={() => handleInputFocus("checkIn")}
+            isActive={activeDropdown === "checkIn"}
             className="w-full sm:w-1/3 mb-2 sm:mb-0 rounded-full hover:bg-gray-100 transition-colors duration-200"
           />
           <Divider className="hidden sm:block" />
           <GuestInput
             icon={<FaUserFriends className="text-gray-400" />}
             totalGuests={totalGuests}
-            onToggle={() => handleInputFocus('guests')}
-            isActive={activeDropdown === 'guests'}
+            onToggle={() => handleInputFocus("guests")}
+            isActive={activeDropdown === "guests"}
             className="w-full sm:w-1/3 mb-2 sm:mb-0"
           />
           <motion.button
@@ -164,7 +209,7 @@ const SearchBar = () => {
         </div>
       </motion.div>
       <AnimatePresence>
-        {activeDropdown === 'destination' && (
+        {activeDropdown === "destination" && (
           <motion.div
             initial={{ opacity: 0, y: -10 }}
             animate={{ opacity: 1, y: 0 }}
@@ -173,17 +218,17 @@ const SearchBar = () => {
             className="absolute left-0 right-0 z-10 mt-2"
           >
             <div className="bg-white shadow-lg rounded-lg max-w-4xl mx-auto">
-              <RegionDropdown 
-                regions={regions} 
+              <RegionDropdown
+                regions={regions}
                 onSelect={(region) => {
                   setSelectedDestination(region);
                   setActiveDropdown(null);
-                }} 
+                }}
               />
             </div>
           </motion.div>
         )}
-        {activeDropdown === 'guests' && (
+        {activeDropdown === "guests" && (
           <motion.div
             initial={{ opacity: 0, y: -10 }}
             animate={{ opacity: 1, y: 0 }}
@@ -208,39 +253,35 @@ const Divider = ({ className }) => (
 
 const HeroSection = () => {
   return (
-    <div className="flex flex-col md:flex-row items-center justify-between py-8 md:py-16 relative z-0">
-      <div className="w-full md:w-1/2 mb-8 md:mb-0 text-white">
-        <h1 className="text-4xl md:text-6xl font-bold mb-4">Discover Unique Experiences</h1>
-        <p className="text-xl md:text-2xl mb-6">Explore the hidden gems of Rajasthan with local experts</p>
-        <button className="bg-orange-500 text-white px-6 py-3 rounded-full text-lg hover:bg-orange-600 transition duration-300">
-          Start Your Adventure
-        </button>
-      </div>
-      <div className="w-full md:w-1/2 relative">
-        <div className="bg-yellow-200 rounded-full h-40 w-40 sm:h-48 sm:w-48 md:h-64 md:w-64 lg:h-80 lg:w-80 absolute right-0 top-0 animate-pulse opacity-50"></div>
-        <img 
-          src="/src/assets/outliers/main.png" 
-          alt="Traveler" 
-          className="relative z-0 max-w-full md:max-w-md mx-auto md:ml-auto transition-transform duration-300 hover:scale-105"
-        />
+    <div className="flex items-center justify-center min-h-screen">
+      <div className="text-center text-white max-w-4xl mx-auto px-4">
+        <h1 className="text-4xl md:text-6xl font-bold mb-4">
+          Discover Unique Experiences
+        </h1>
+        <p className="text-xl md:text-2xl mb-6">
+          Explore the hidden gems of Rajasthan with local experts
+        </p>
       </div>
     </div>
   );
 };
 
 function MyApp() {
-    return (
-        <div className="relative min-h-screen w-full bg-cover bg-center bg-no-repeat" style={{ backgroundImage: "url('/src/assets/outliers/udaipur.jpg')" }}>
-          <div className="absolute inset-0 bg-black bg-opacity-50"></div>
-          <div className="relative z-10 min-h-screen">
-            <div className="container mx-auto px-4">
-              <Navbar />
-              <SearchBar />
-              <HeroSection />
-            </div>
-          </div>
+  return (
+    <div
+      className="relative min-h-screen w-full bg-cover bg-center bg-no-repeat"
+      style={{ backgroundImage: "url('/src/assets/outliers/udaipur.jpg')" }}
+    >
+      <div className="absolute inset-0 bg-black bg-opacity-50"></div>
+      <div className="relative z-10 min-h-screen">
+        <div className="container mx-auto px-4">
+          <Navbar />
+          <SearchBar />
         </div>
-      );
-    }
+        <HeroSection />
+      </div>
+    </div>
+  );
+}
 
 export default MyApp;

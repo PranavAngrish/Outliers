@@ -1,6 +1,6 @@
 import React from 'react';
 import Navbar from './components/Navbar.jsx';
-import SearchBar from './components/SearchBar.jsx';
+import SearchBar from './components/SearchBar/SearchBar.jsx';
 import HeroSection from './components/HeroSection.jsx';
 import PopularPlaces from './components/PopularPlaces.jsx';
 import ExploreDestinations from './components/ExploreDestinations.jsx';

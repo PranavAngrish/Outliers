@@ -1,21 +1,68 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { FaSearch, FaCalendarAlt, FaUserFriends } from 'react-icons/fa';
+import { FaSearch, FaCalendarAlt, FaUserFriends, FaBars } from 'react-icons/fa';
 import "react-datepicker/dist/react-datepicker.css";
 import { motion, AnimatePresence } from 'framer-motion';
-import SearchInput from './SearchInput';
-import DateInput from './DateInput';
-import GuestInput from './GuestInput';
-import RegionDropdown from './RegionDropdown';
-import GuestMenu from './GuestMenu';
+import SearchInput from './SearchBar/SearchInput';
+import DateInput from './SearchBar/DateInput';
+import GuestInput from './SearchBar/GuestInput';
+import RegionDropdown from './SearchBar/RegionDropdown';
+import GuestMenu from './SearchBar/GuestMenu';
 
-function SearchBar() {
+const NavItem = ({ href, children }) => (
+  <a href={href} className="text-sm lg:text-base text-white hover:text-orange-300 transition-colors duration-300 hover:underline">
+    {children}
+  </a>
+);
+
+const NavButton = ({ className, children }) => (
+  <button className={`px-3 py-1 lg:px-4 lg:py-2 text-sm lg:text-base rounded-full transition duration-300 transform hover:scale-105 ${className}`}>
+    {children}
+  </button>
+);
+
+const Navbar = () => {
+  const [showMobileMenu, setShowMobileMenu] = useState(false);
+
+  const navItems = ['Experiences', 'Destinations', 'About Us', 'Contact Us'];
+
+  return (
+    <>
+      <nav className="flex justify-between items-center py-6">
+        <div className="flex items-center">
+          <img src="/src/assets/outliers/logo.jpg" alt="logo" className="h-10 w-10 sm:h-12 sm:w-12 mr-2 transition-transform duration-300 hover:scale-110" />
+          <span className="text-lg sm:text-xl font-bold text-white">The Outliers Co</span>
+        </div>
+        <div className="hidden md:flex justify-center space-x-4 lg:space-x-8">
+          {navItems.map((item, index) => (
+            <NavItem key={index} href="#">{item}</NavItem>
+          ))}
+        </div>
+        <div className="hidden md:flex space-x-2 lg:space-x-4">
+          <NavButton className="bg-white text-black hover:bg-gray-200">Host An Experience!</NavButton>
+          <NavButton className="bg-orange-500 text-white hover:bg-orange-600">Login</NavButton>
+        </div>
+        <button onClick={() => setShowMobileMenu(!showMobileMenu)} className="md:hidden text-white">
+          <FaBars className="text-xl" />
+        </button>
+      </nav>
+
+      {showMobileMenu && (
+        <div className="md:hidden bg-white shadow-md rounded-lg p-4 mb-4">
+          {navItems.map((item, index) => (
+            <a key={index} href="#" className="block py-2 text-black hover:text-orange-600 transition-colors duration-300">{item}</a>
+          ))}
+          <NavButton className="w-full bg-black text-white hover:bg-gray-800 mt-2">Host An Experience!</NavButton>
+          <NavButton className="w-full bg-orange-500 text-white hover:bg-orange-600 mt-2">Login</NavButton>
+        </div>
+      )}
+    </>
+  );
+};
+
+const SearchBar = () => {
   const [selectedDestination, setSelectedDestination] = useState('');
   const [checkInDate, setCheckInDate] = useState(null);
-  const [guests, setGuests] = useState({
-    adults: 0,
-    children: 0,
-    infants: 0
-  });
+  const [guests, setGuests] = useState({ adults: 0, children: 0, infants: 0 });
   const [activeDropdown, setActiveDropdown] = useState(null);
   const [isSticky, setIsSticky] = useState(false);
   const searchBarRef = useRef(null);
@@ -31,18 +78,16 @@ function SearchBar() {
   ];
 
   useEffect(() => {
-    function handleClickOutside(event) {
-      if (searchBarRef.current && !searchBarRef.current.contains(event.target)) {
-        if (!(guestMenuRef.current && guestMenuRef.current.contains(event.target))) {
-          setActiveDropdown(null);
-        }
+    const handleClickOutside = (event) => {
+      if (searchBarRef.current && !searchBarRef.current.contains(event.target) &&
+          !(guestMenuRef.current && guestMenuRef.current.contains(event.target))) {
+        setActiveDropdown(null);
       }
-    }
+    };
 
-    function handleScroll() {
-      const scrollPosition = window.scrollY;
-      setIsSticky(scrollPosition > 100);
-    }
+    const handleScroll = () => {
+      setIsSticky(window.scrollY > 100);
+    };
 
     document.addEventListener("mousedown", handleClickOutside);
     window.addEventListener("scroll", handleScroll);
@@ -155,10 +200,47 @@ function SearchBar() {
       </AnimatePresence>
     </div>
   );
-}
+};
 
 const Divider = ({ className }) => (
   <div className={`h-8 w-px bg-gray-300 mx-2 ${className}`} />
 );
 
-export default SearchBar;
+const HeroSection = () => {
+  return (
+    <div className="flex flex-col md:flex-row items-center justify-between py-8 md:py-16 relative z-0">
+      <div className="w-full md:w-1/2 mb-8 md:mb-0 text-white">
+        <h1 className="text-4xl md:text-6xl font-bold mb-4">Discover Unique Experiences</h1>
+        <p className="text-xl md:text-2xl mb-6">Explore the hidden gems of Rajasthan with local experts</p>
+        <button className="bg-orange-500 text-white px-6 py-3 rounded-full text-lg hover:bg-orange-600 transition duration-300">
+          Start Your Adventure
+        </button>
+      </div>
+      <div className="w-full md:w-1/2 relative">
+        <div className="bg-yellow-200 rounded-full h-40 w-40 sm:h-48 sm:w-48 md:h-64 md:w-64 lg:h-80 lg:w-80 absolute right-0 top-0 animate-pulse opacity-50"></div>
+        <img 
+          src="/src/assets/outliers/main.png" 
+          alt="Traveler" 
+          className="relative z-0 max-w-full md:max-w-md mx-auto md:ml-auto transition-transform duration-300 hover:scale-105"
+        />
+      </div>
+    </div>
+  );
+};
+
+function MyApp() {
+    return (
+        <div className="relative min-h-screen w-full bg-cover bg-center bg-no-repeat" style={{ backgroundImage: "url('/src/assets/outliers/udaipur.jpg')" }}>
+          <div className="absolute inset-0 bg-black bg-opacity-50"></div>
+          <div className="relative z-10 min-h-screen">
+            <div className="container mx-auto px-4">
+              <Navbar />
+              <SearchBar />
+              <HeroSection />
+            </div>
+          </div>
+        </div>
+      );
+    }
+
+export default MyApp;

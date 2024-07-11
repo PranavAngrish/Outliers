@@ -7,7 +7,7 @@ import DateInput from "./SearchBar/DateInput";
 import GuestInput from "./SearchBar/GuestInput";
 import RegionDropdown from "./SearchBar/RegionDropdown";
 import GuestMenu from "./SearchBar/GuestMenu";
-
+import ExperienceCards from "./ExperienceCards";  
 const NavItem = ({ href, children }) => (
   <a
     href={href}
@@ -54,7 +54,7 @@ const Navbar = () => {
           <NavButton className="bg-white text-black hover:bg-gray-200">
             Host An Experience!
           </NavButton>
-          <NavButton className="bg-orange-500 text-white hover:bg-orange-600">
+          <NavButton className="bg-pink-500 text-white hover:bg-pink-600">
             Login
           </NavButton>
         </div>
@@ -254,13 +254,20 @@ const Divider = ({ className }) => (
 const HeroSection = () => {
   return (
     <div className="flex items-center justify-center min-h-screen">
-      <div className="text-center text-white max-w-4xl mx-auto px-4">
-        <h1 className="text-4xl md:text-6xl font-bold mb-4">
-          Discover Unique Experiences
-        </h1>
-        <p className="text-xl md:text-2xl mb-6">
-          Explore the hidden gems of Rajasthan with local experts
-        </p>
+      <div className="container mx-auto px-4">
+        <div className="flex flex-col lg:flex-row items-center lg:items-start">
+          <div className="text-white max-w-2xl lg:mr-8 mb-8 lg:mb-0">
+            <h1 className="text-4xl md:text-6xl font-bold mb-4">
+              Discover Unique Experiences
+            </h1>
+            <p className="text-xl md:text-2xl mb-6">
+              Explore the hidden gems of Rajasthan with local experts
+            </p>
+          </div>
+          <div className="w-full lg:w-1/2">
+            <ExperienceCards />
+          </div>
+        </div>
       </div>
     </div>
   );
@@ -268,10 +275,16 @@ const HeroSection = () => {
 
 function MyApp() {
   return (
-    <div
-      className="relative min-h-screen w-full bg-cover bg-center bg-no-repeat"
-      style={{ backgroundImage: "url('/src/assets/outliers/udaipur.jpg')" }}
+    <div className="relative min-h-screen w-full overflow-hidden">
+    <video
+      autoPlay
+      loop
+      muted
+      className="absolute top-0 left-0 min-h-full min-w-full object-cover"
     >
+      <source src="/src/assets/outliers/camel.mov" type="video/mp4" />
+      Your browser does not support the video tag.
+    </video>
       <div className="absolute inset-0 bg-black bg-opacity-50"></div>
       <div className="relative z-10 min-h-screen">
         <div className="container mx-auto px-4">

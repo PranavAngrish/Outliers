@@ -7,7 +7,8 @@ import DateInput from "./SearchBar/DateInput";
 import GuestInput from "./SearchBar/GuestInput";
 import RegionDropdown from "./SearchBar/RegionDropdown";
 import GuestMenu from "./SearchBar/GuestMenu";
-import ExperienceCards from "./ExperienceCards";  
+import ExperienceCards from "./ExperienceCards"; 
+import bg from "/src/assets/outliers/campaign.mp4"; 
 const NavItem = ({ href, children }) => (
   <a
     href={href}
@@ -282,7 +283,7 @@ function MyApp() {
       muted
       className="absolute top-0 left-0 min-h-full min-w-full object-cover"
     >
-      <source src="/src/assets/outliers/campaign.mp4" type="video/mp4" />
+      <source src={bg} type="video/mp4" />
       Your browser does not support the video tag.
     </video>
       <div className="absolute inset-0 bg-black bg-opacity-50"></div>

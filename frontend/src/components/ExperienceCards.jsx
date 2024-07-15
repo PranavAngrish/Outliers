@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { FaChevronLeft, FaChevronRight } from 'react-icons/fa';
-import { motion } from 'framer-motion';
+import { motion, useAnimation } from 'framer-motion';
 
 const ExperienceCard = ({ image, title }) => (
   <div className="relative rounded-lg overflow-hidden group">
@@ -23,6 +23,9 @@ const ExperienceCards = () => {
 
   const [currentIndex, setCurrentIndex] = useState(0);
   const [cardsPerView, setCardsPerView] = useState(3);
+  const [touchStart, setTouchStart] = useState(null);
+  const [touchEnd, setTouchEnd] = useState(null);
+  const controls = useAnimation();
 
   useEffect(() => {
     const handleResize = () => {
@@ -65,12 +68,41 @@ const ExperienceCards = () => {
     return () => window.removeEventListener('keydown', handleKeyDown);
   }, [currentIndex, cardsPerView]);
 
+  const handleTouchStart = (e) => {
+    setTouchEnd(null);
+    setTouchStart(e.targetTouches[0].clientX);
+  };
+
+  const handleTouchMove = (e) => {
+    setTouchEnd(e.targetTouches[0].clientX);
+  };
+
+  const handleTouchEnd = () => {
+    if (!touchStart || !touchEnd) return;
+    const distance = touchStart - touchEnd;
+    const isLeftSwipe = distance > 50;
+    const isRightSwipe = distance < -50;
+
+    if (isLeftSwipe) {
+      nextCards();
+    } else if (isRightSwipe) {
+      prevCards();
+    }
+  };
+
+  useEffect(() => {
+    controls.start({ x: `-${currentIndex * (100 / cardsPerView)}%` });
+  }, [currentIndex, cardsPerView, controls]);
+
   return (
     <div className="relative w-full overflow-hidden px-4 sm:px-0">
-      <motion.div 
+      <motion.div
         className="flex gap-4"
-        animate={{ x: `-${currentIndex * (100 / cardsPerView)}%` }}
+        animate={controls}
         transition={{ type: "spring", stiffness: 300, damping: 30 }}
+        onTouchStart={handleTouchStart}
+        onTouchMove={handleTouchMove}
+        onTouchEnd={handleTouchEnd}
       >
         {experiences.map((exp, index) => (
           <div key={index} className={`w-full sm:w-1/2 md:w-1/3 flex-shrink-0`}>

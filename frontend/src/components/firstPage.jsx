@@ -282,7 +282,7 @@ function MyApp() {
       muted
       className="absolute top-0 left-0 min-h-full min-w-full object-cover"
     >
-      <source src="/src/assets/outliers/camel.mov" type="video/mp4" />
+      <source src="/src/assets/outliers/campaign.mp4" type="video/mp4" />
       Your browser does not support the video tag.
     </video>
       <div className="absolute inset-0 bg-black bg-opacity-50"></div>

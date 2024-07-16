@@ -198,8 +198,8 @@ const SearchBar = () => {
           />
           <motion.button
             className="bg-pink-500 text-white p-3 rounded-full hover:bg-pink-600 transition duration-300 w-full sm:w-auto flex items-center justify-center text-base"
-            whileHover={{ scale: 1.05 }}
-            whileTap={{ scale: 0.95 }}
+            whileHover={{ scale: { sm: 1.05 } }}
+            whileTap={{ scale: { sm: 0.95 } }}
             onClick={handleSearch}
           >
             <FaSearch className="mr-2 sm:mr-0" />

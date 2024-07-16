@@ -7,8 +7,8 @@ import DateInput from "./SearchBar/DateInput";
 import GuestInput from "./SearchBar/GuestInput";
 import RegionDropdown from "./SearchBar/RegionDropdown";
 import GuestMenu from "./SearchBar/GuestMenu";
-import ExperienceCards from "./ExperienceCards"; 
-import bg from "/src/assets/outliers/campaign.mp4"; 
+import ExperienceCards from "./ExperienceCards";
+import bg from "/src/assets/outliers/campaign.mp4";
 const NavItem = ({ href, children }) => (
   <a
     href={href}
@@ -162,7 +162,7 @@ const SearchBar = () => {
       }`}
     >
       <motion.div
-        className={`bg-white shadow-lg rounded-full p-2 mb-2 max-w-4xl mx-auto ${
+        className={`bg-white shadow-lg rounded-3xl p-2 sm:p-3 mb-2 max-w-4xl mx-auto ${
           isSticky ? "mt-4" : ""
         }`}
         initial={{ opacity: 0, y: -20 }}
@@ -170,7 +170,7 @@ const SearchBar = () => {
         transition={{ duration: 0.5 }}
         ref={searchBarRef}
       >
-        <div className="flex flex-col sm:flex-row items-center">
+        <div className="flex flex-col sm:flex-row sm:items-center">
           <SearchInput
             icon={<FaSearch className="text-gray-400" />}
             placeholder="Search destinations"
@@ -178,9 +178,8 @@ const SearchBar = () => {
             onChange={setSelectedDestination}
             onFocus={() => handleInputFocus("destination")}
             isActive={activeDropdown === "destination"}
-            className="w-full sm:w-1/3 mb-2 sm:mb-0"
+            className="w-full sm:w-1/3 mb-2 sm:mb-0 sm:mr-2"
           />
-          <Divider className="hidden sm:block" />
           <DateInput
             icon={<FaCalendarAlt className="text-gray-400" />}
             selected={checkInDate}
@@ -188,24 +187,23 @@ const SearchBar = () => {
             placeholderText="When?"
             onFocus={() => handleInputFocus("checkIn")}
             isActive={activeDropdown === "checkIn"}
-            className="w-full sm:w-1/3 mb-2 sm:mb-0 rounded-full hover:bg-gray-100 transition-colors duration-200"
+            className="w-full sm:w-1/3 mb-2 sm:mb-0 sm:mr-2 rounded-full hover:bg-gray-100 transition-colors duration-200"
           />
-          <Divider className="hidden sm:block" />
           <GuestInput
             icon={<FaUserFriends className="text-gray-400" />}
             totalGuests={totalGuests}
             onToggle={() => handleInputFocus("guests")}
             isActive={activeDropdown === "guests"}
-            className="w-full sm:w-1/3 mb-2 sm:mb-0"
+            className="w-full sm:w-1/3 mb-3 sm:mb-0 sm:mr-2"
           />
           <motion.button
-            className="bg-pink-500 text-white p-3 rounded-full hover:bg-pink-600 transition duration-300 w-full sm:w-auto sm:ml-2 flex items-center justify-center"
+            className="bg-pink-500 text-white p-3 rounded-full hover:bg-pink-600 transition duration-300 w-full sm:w-auto flex items-center justify-center text-base"
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
             onClick={handleSearch}
           >
-            <FaSearch className="mr-2" />
-            Search
+            <FaSearch className="mr-2 sm:mr-0" />
+            <span className="sm:hidden">Search</span>
           </motion.button>
         </div>
       </motion.div>
@@ -277,15 +275,15 @@ const HeroSection = () => {
 function MyApp() {
   return (
     <div className="relative min-h-screen w-full overflow-hidden">
-    <video
-      autoPlay
-      loop
-      muted
-      className="absolute top-0 left-0 min-h-full min-w-full object-cover"
-    >
-      <source src={bg} type="video/mp4" />
-      Your browser does not support the video tag.
-    </video>
+      <video
+        autoPlay
+        loop
+        muted
+        className="absolute top-0 left-0 min-h-full min-w-full object-cover"
+      >
+        <source src={bg} type="video/mp4" />
+        Your browser does not support the video tag.
+      </video>
       <div className="absolute inset-0 bg-black bg-opacity-50"></div>
       <div className="relative z-10 min-h-screen">
         <div className="container mx-auto px-4">

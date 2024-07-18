@@ -24,12 +24,15 @@ function ExploreDestinations() {
   const [cardStartIndex, setCardStartIndex] = useState(0);
   const [visibleCards, setVisibleCards] = useState(6);
   const [selectedCity, setSelectedCity] = useState(null);
+  const [isDragging, setIsDragging] = useState(false);
+  const [startX, setStartX] = useState(0);
+  const [scrollLeft, setScrollLeft] = useState(0);
 
   const updateViewSettings = useCallback(() => {
     const mobile = window.innerWidth < 768;
     setIsMobile(mobile);
     if (mobile) {
-      setCitiesPerView(3);
+      setCitiesPerView(2);
     } else if (window.innerWidth < 1024) {
       setCitiesPerView(3);
     } else {
@@ -61,18 +64,43 @@ function ExploreDestinations() {
     });
   };
 
-  const handleTouchStart = (e, ref) => {
-    ref.current.touchStartX = e.touches[0].clientX;
+  const handleMouseDown = (e) => {
+    setIsDragging(true);
+    setStartX(e.pageX - containerRef.current.offsetLeft);
+    setScrollLeft(containerRef.current.scrollLeft);
   };
 
-  const handleTouchMove = (e, ref, shiftFunction) => {
-    if (!ref.current.touchStartX) return;
-    const touchEndX = e.touches[0].clientX;
-    const diff = ref.current.touchStartX - touchEndX;
-    if (Math.abs(diff) > 50) {
-      shiftFunction(diff > 0 ? 'next' : 'prev');
-      ref.current.touchStartX = null;
-    }
+  const handleMouseLeave = () => {
+    setIsDragging(false);
+  };
+
+  const handleMouseUp = () => {
+    setIsDragging(false);
+  };
+
+  const handleMouseMove = (e) => {
+    if (!isDragging) return;
+    e.preventDefault();
+    const x = e.pageX - containerRef.current.offsetLeft;
+    const walk = (x - startX) * 2;
+    containerRef.current.scrollLeft = scrollLeft - walk;
+  };
+
+  const handleTouchStart = (e) => {
+    setIsDragging(true);
+    setStartX(e.touches[0].pageX - containerRef.current.offsetLeft);
+    setScrollLeft(containerRef.current.scrollLeft);
+  };
+
+  const handleTouchMove = (e) => {
+    if (!isDragging) return;
+    const x = e.touches[0].pageX - containerRef.current.offsetLeft;
+    const walk = (x - startX) * 2;
+    containerRef.current.scrollLeft = scrollLeft - walk;
+  };
+
+  const handleTouchEnd = () => {
+    setIsDragging(false);
   };
 
   const loadMoreCards = () => {
@@ -110,8 +138,9 @@ function ExploreDestinations() {
             ref={containerRef}
             className="flex transition-transform duration-300 ease-in-out"
             style={{ transform: `translateX(-${cardStartIndex * 100}%)` }}
-            onTouchStart={(e) => handleTouchStart(e, containerRef)}
-            onTouchMove={(e) => handleTouchMove(e, containerRef, shiftCards)}
+            onTouchStart={handleTouchStart}
+            onTouchMove={handleTouchMove}
+            onTouchEnd={handleTouchEnd}
           >
             {filteredPlaces.map((place, index) => (
               <div 
@@ -197,13 +226,18 @@ function ExploreDestinations() {
           ref={containerRef}
           className="flex transition-transform duration-300 ease-in-out"
           style={{ transform: `translateX(-${startIndex * (100 / citiesPerView)}%)` }}
-          onTouchStart={(e) => handleTouchStart(e, containerRef)}
-          onTouchMove={(e) => handleTouchMove(e, containerRef, shiftCities)}
+          onMouseDown={handleMouseDown}
+          onMouseLeave={handleMouseLeave}
+          onMouseUp={handleMouseUp}
+          onMouseMove={handleMouseMove}
+          onTouchStart={handleTouchStart}
+          onTouchMove={handleTouchMove}
+          onTouchEnd={handleTouchEnd}
         >
           {cities.map((city, index) => (
             <button 
               key={index}
-              className={`flex-shrink-0 bg-pink-100 px-2 py-1 text-xs sm:text-sm rounded-full hover:bg-pink-200 transition duration-300 transform hover:scale-105 hover:shadow-md text-pink-700 mr-2 ${selectedCity === city ? 'bg-pink-300' : ''}`}
+              className={`flex-shrink-0 bg-pink-100 px-4 py-2 text-sm sm:text-base rounded-full hover:bg-pink-200 transition duration-300 transform hover:scale-105 hover:shadow-md text-pink-700 mr-2 ${selectedCity === city ? 'bg-pink-300' : ''}`}
               style={{ width: `calc(${100 / citiesPerView}% - 0.5rem)` }}
               onClick={() => handleCityClick(city)}
             >

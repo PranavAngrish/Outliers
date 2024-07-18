@@ -46,11 +46,12 @@ const ModernDateInput = ({ icon, selected, onChange, placeholderText, onFocus, i
   return (
     <div className="relative" ref={wrapperRef}>
       <div 
-        className={`flex items-center p-2 cursor-pointer ${
+        className={`flex items-center cursor-pointer ${
           isActive ? 'bg-gray-100' : ''
-        } hover:bg-gray-100 transition-colors duration-200 rounded-full`}
+        } hover:bg-gray-100 transition-colors duration-200 rounded-full
+        p-[8px] pl-[40px] pr-[16px] sm:p-2 sm:pl-2 sm:pr-2`} // Modified padding here
       >
-        <span className="mr-2 pointer-events-none">{icon}</span>
+        <span className="absolute left-3 sm:static sm:mr-2 pointer-events-none">{icon}</span>
         <input
           ref={inputRef}
           type="text"

@@ -16,21 +16,25 @@ function ExploreDestinations() {
   ];
 
   const cities = ['Delhi', 'Mumbai', 'Bangalore', 'Kolkata', 'Chennai', 'Hyderabad', 'Ahmedabad', 'Pune'];
-  const [cityStartIndex, setCityStartIndex] = useState(0);
+  const [startIndex, setStartIndex] = useState(0);
   const [citiesPerView, setCitiesPerView] = useState(4);
+  const containerRef = useRef(null);
+  const sectionRef = useRef(null);
   const [isMobile, setIsMobile] = useState(false);
   const [cardStartIndex, setCardStartIndex] = useState(0);
   const [visibleCards, setVisibleCards] = useState(6);
   const [selectedCity, setSelectedCity] = useState(null);
 
-  const cityContainerRef = useRef(null);
-  const cardContainerRef = useRef(null);
-  const sectionRef = useRef(null);
-
   const updateViewSettings = useCallback(() => {
     const mobile = window.innerWidth < 768;
     setIsMobile(mobile);
-    setCitiesPerView(mobile ? 2 : window.innerWidth < 1024 ? 3 : 4);
+    if (mobile) {
+      setCitiesPerView(3);
+    } else if (window.innerWidth < 1024) {
+      setCitiesPerView(3);
+    } else {
+      setCitiesPerView(4);
+    }
   }, []);
 
   useEffect(() => {
@@ -40,7 +44,7 @@ function ExploreDestinations() {
   }, [updateViewSettings]);
 
   const shiftCities = (direction) => {
-    setCityStartIndex((prevIndex) => {
+    setStartIndex((prevIndex) => {
       const newIndex = direction === 'next' 
         ? Math.min(prevIndex + 1, cities.length - citiesPerView)
         : Math.max(prevIndex - 1, 0);
@@ -57,31 +61,17 @@ function ExploreDestinations() {
     });
   };
 
-  const handleCitySwipe = (e) => {
-    if (!cityContainerRef.current) return;
-    const container = cityContainerRef.current;
-    const threshold = 50;
-    const touch = e.changedTouches[0];
-    const diff = touch.clientX - container.getBoundingClientRect().left;
-    
-    if (diff < threshold && cityStartIndex > 0) {
-      shiftCities('prev');
-    } else if (container.offsetWidth - diff < threshold && cityStartIndex < cities.length - citiesPerView) {
-      shiftCities('next');
-    }
+  const handleTouchStart = (e, ref) => {
+    ref.current.touchStartX = e.touches[0].clientX;
   };
 
-  const handleCardSwipe = (e) => {
-    if (!cardContainerRef.current || !isMobile) return;
-    const container = cardContainerRef.current;
-    const threshold = 50;
-    const touch = e.changedTouches[0];
-    const diff = touch.clientX - container.getBoundingClientRect().left;
-    
-    if (diff < threshold && cardStartIndex > 0) {
-      shiftCards('prev');
-    } else if (container.offsetWidth - diff < threshold && cardStartIndex < filteredPlaces.length - 1) {
-      shiftCards('next');
+  const handleTouchMove = (e, ref, shiftFunction) => {
+    if (!ref.current.touchStartX) return;
+    const touchEndX = e.touches[0].clientX;
+    const diff = ref.current.touchStartX - touchEndX;
+    if (Math.abs(diff) > 50) {
+      shiftFunction(diff > 0 ? 'next' : 'prev');
+      ref.current.touchStartX = null;
     }
   };
 
@@ -117,10 +107,11 @@ function ExploreDestinations() {
       return (
         <div className="relative overflow-hidden">
           <div 
-            ref={cardContainerRef}
+            ref={containerRef}
             className="flex transition-transform duration-300 ease-in-out"
             style={{ transform: `translateX(-${cardStartIndex * 100}%)` }}
-            onTouchEnd={handleCardSwipe}
+            onTouchStart={(e) => handleTouchStart(e, containerRef)}
+            onTouchMove={(e) => handleTouchMove(e, containerRef, shiftCards)}
           >
             {filteredPlaces.map((place, index) => (
               <div 
@@ -203,15 +194,16 @@ function ExploreDestinations() {
       <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-6 md:mb-8">Explore Destinations</h2>
       <div className="relative mb-6 md:mb-8 overflow-hidden">
         <div 
-          ref={cityContainerRef}
+          ref={containerRef}
           className="flex transition-transform duration-300 ease-in-out"
-          style={{ transform: `translateX(-${cityStartIndex * (100 / citiesPerView)}%)` }}
-          onTouchEnd={handleCitySwipe}
+          style={{ transform: `translateX(-${startIndex * (100 / citiesPerView)}%)` }}
+          onTouchStart={(e) => handleTouchStart(e, containerRef)}
+          onTouchMove={(e) => handleTouchMove(e, containerRef, shiftCities)}
         >
           {cities.map((city, index) => (
             <button 
               key={index}
-              className={`flex-shrink-0 bg-pink-100 px-4 py-2 text-sm sm:text-base rounded-full hover:bg-pink-200 transition duration-300 transform hover:scale-105 hover:shadow-md text-pink-700 mr-2 ${selectedCity === city ? 'bg-pink-300' : ''}`}
+              className={`flex-shrink-0 bg-pink-100 px-2 py-1 text-xs sm:text-sm rounded-full hover:bg-pink-200 transition duration-300 transform hover:scale-105 hover:shadow-md text-pink-700 mr-2 ${selectedCity === city ? 'bg-pink-300' : ''}`}
               style={{ width: `calc(${100 / citiesPerView}% - 0.5rem)` }}
               onClick={() => handleCityClick(city)}
             >
@@ -219,7 +211,7 @@ function ExploreDestinations() {
             </button>
           ))}
         </div>
-        {cityStartIndex > 0 && (
+        {startIndex > 0 && (
           <button
             onClick={() => shiftCities('prev')}
             className="absolute left-0 top-1/2 transform -translate-y-1/2 bg-pink-500 hover:bg-pink-600 text-white p-2 rounded-full transition-all duration-300"
@@ -227,7 +219,7 @@ function ExploreDestinations() {
             <FaChevronLeft size={20} />
           </button>
         )}
-        {cityStartIndex < cities.length - citiesPerView && (
+        {startIndex < cities.length - citiesPerView && (
           <button
             onClick={() => shiftCities('next')}
             className="absolute right-0 top-1/2 transform -translate-y-1/2 bg-pink-500 hover:bg-pink-600 text-white p-2 rounded-full transition-all duration-300"

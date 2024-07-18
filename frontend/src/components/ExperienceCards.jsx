@@ -1,6 +1,6 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect } from 'react';
 import { FaChevronLeft, FaChevronRight } from 'react-icons/fa';
-import { motion, useAnimation, useDragControls } from 'framer-motion';
+import { motion, useAnimation } from 'framer-motion';
 
 const ExperienceCard = ({ image, title }) => (
   <div className="relative rounded-lg overflow-hidden group">
@@ -23,9 +23,9 @@ const ExperienceCards = () => {
 
   const [currentIndex, setCurrentIndex] = useState(0);
   const [cardsPerView, setCardsPerView] = useState(3);
-  const containerRef = useRef(null);
+  const [touchStart, setTouchStart] = useState(null);
+  const [touchEnd, setTouchEnd] = useState(null);
   const controls = useAnimation();
-  const dragControls = useDragControls();
 
   useEffect(() => {
     const handleResize = () => {
@@ -45,13 +45,48 @@ const ExperienceCards = () => {
 
   const nextCards = () => {
     if (currentIndex < experiences.length - cardsPerView) {
-      setCurrentIndex(prevIndex => prevIndex + 1);
+      setCurrentIndex(currentIndex + 1);
     }
   };
 
   const prevCards = () => {
     if (currentIndex > 0) {
-      setCurrentIndex(prevIndex => prevIndex - 1);
+      setCurrentIndex(currentIndex - 1);
+    }
+  };
+
+  useEffect(() => {
+    const handleKeyDown = (event) => {
+      if (event.key === 'ArrowRight') {
+        nextCards();
+      } else if (event.key === 'ArrowLeft') {
+        prevCards();
+      }
+    };
+
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [currentIndex, cardsPerView]);
+
+  const handleTouchStart = (e) => {
+    setTouchEnd(null);
+    setTouchStart(e.targetTouches[0].clientX);
+  };
+
+  const handleTouchMove = (e) => {
+    setTouchEnd(e.targetTouches[0].clientX);
+  };
+
+  const handleTouchEnd = () => {
+    if (!touchStart || !touchEnd) return;
+    const distance = touchStart - touchEnd;
+    const isLeftSwipe = distance > 50;
+    const isRightSwipe = distance < -50;
+
+    if (isLeftSwipe) {
+      nextCards();
+    } else if (isRightSwipe) {
+      prevCards();
     }
   };
 
@@ -59,44 +94,26 @@ const ExperienceCards = () => {
     controls.start({ x: `-${currentIndex * (100 / cardsPerView)}%` });
   }, [currentIndex, cardsPerView, controls]);
 
-  const handleDragEnd = (event, info) => {
-    const swipeThreshold = 50;
-    if (info.offset.x < -swipeThreshold && currentIndex < experiences.length - cardsPerView) {
-      nextCards();
-    } else if (info.offset.x > swipeThreshold && currentIndex > 0) {
-      prevCards();
-    } else {
-      controls.start({ x: `-${currentIndex * (100 / cardsPerView)}%` });
-    }
-  };
-
   return (
-    <div className="relative w-full overflow-hidden px-4 sm:px-0" ref={containerRef}>
+    <div className="relative w-full overflow-hidden px-4 sm:px-0">
       <motion.div
         className="flex gap-4"
         animate={controls}
-        drag="x"
-        dragControls={dragControls}
-        dragConstraints={containerRef}
-        dragElastic={0.1}
-        onDragEnd={handleDragEnd}
-        transition={{ type: "spring", stiffness: 400, damping: 40 }}
+        transition={{ type: "spring", stiffness: 300, damping: 30 }}
+        onTouchStart={handleTouchStart}
+        onTouchMove={handleTouchMove}
+        onTouchEnd={handleTouchEnd}
       >
         {experiences.map((exp, index) => (
-          <motion.div 
-            key={index} 
-            className={`w-full sm:w-1/2 md:w-1/3 flex-shrink-0`}
-            whileTap={{ scale: 0.95 }}
-          >
+          <div key={index} className={`w-full sm:w-1/2 md:w-1/3 flex-shrink-0`}>
             <ExperienceCard {...exp} />
-          </motion.div>
+          </div>
         ))}
       </motion.div>
       {currentIndex > 0 && (
         <button
           onClick={prevCards}
-          className="absolute left-0 top-1/2 transform -translate-y-1/2 bg-pink-500 hover:bg-pink-600 text-white p-2 rounded-full transition-all duration-300 focus:outline-none"
-          aria-label="Previous"
+          className="absolute left-0 top-1/2 transform -translate-y-1/2 bg-pink-500 hover:bg-pink-600 text-white p-2 rounded-full transition-all duration-300"
         >
           <FaChevronLeft size={20} />
         </button>
@@ -104,8 +121,7 @@ const ExperienceCards = () => {
       {currentIndex < experiences.length - cardsPerView && (
         <button
           onClick={nextCards}
-          className="absolute right-0 top-1/2 transform -translate-y-1/2 bg-pink-500 hover:bg-pink-600 text-white p-2 rounded-full transition-all duration-300 focus:outline-none"
-          aria-label="Next"
+          className="absolute right-0 top-1/2 transform -translate-y-1/2 bg-pink-500 hover:bg-pink-600 text-white p-2 rounded-full transition-all duration-300"
         >
           <FaChevronRight size={20} />
         </button>

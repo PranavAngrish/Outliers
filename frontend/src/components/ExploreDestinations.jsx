@@ -16,28 +16,21 @@ function ExploreDestinations() {
   ];
 
   const cities = ['Delhi', 'Mumbai', 'Bangalore', 'Kolkata', 'Chennai', 'Hyderabad', 'Ahmedabad', 'Pune'];
-  const [startIndex, setStartIndex] = useState(0);
+  const [cityStartIndex, setCityStartIndex] = useState(0);
   const [citiesPerView, setCitiesPerView] = useState(4);
-  const containerRef = useRef(null);
-  const sectionRef = useRef(null);
   const [isMobile, setIsMobile] = useState(false);
   const [cardStartIndex, setCardStartIndex] = useState(0);
   const [visibleCards, setVisibleCards] = useState(6);
   const [selectedCity, setSelectedCity] = useState(null);
-  const [isDragging, setIsDragging] = useState(false);
-  const [startX, setStartX] = useState(0);
-  const [scrollLeft, setScrollLeft] = useState(0);
+
+  const cityContainerRef = useRef(null);
+  const cardContainerRef = useRef(null);
+  const sectionRef = useRef(null);
 
   const updateViewSettings = useCallback(() => {
     const mobile = window.innerWidth < 768;
     setIsMobile(mobile);
-    if (mobile) {
-      setCitiesPerView(2);
-    } else if (window.innerWidth < 1024) {
-      setCitiesPerView(3);
-    } else {
-      setCitiesPerView(4);
-    }
+    setCitiesPerView(mobile ? 2 : window.innerWidth < 1024 ? 3 : 4);
   }, []);
 
   useEffect(() => {
@@ -47,7 +40,7 @@ function ExploreDestinations() {
   }, [updateViewSettings]);
 
   const shiftCities = (direction) => {
-    setStartIndex((prevIndex) => {
+    setCityStartIndex((prevIndex) => {
       const newIndex = direction === 'next' 
         ? Math.min(prevIndex + 1, cities.length - citiesPerView)
         : Math.max(prevIndex - 1, 0);
@@ -64,49 +57,32 @@ function ExploreDestinations() {
     });
   };
 
-  const handleMouseDown = (e) => {
-    setIsDragging(true);
-    setStartX(e.pageX - containerRef.current.offsetLeft);
-    setScrollLeft(containerRef.current.scrollLeft);
-  };
-
-  const handleMouseLeave = () => {
-    setIsDragging(false);
-  };
-
-  const handleMouseUp = () => {
-    setIsDragging(false);
-  };
-
-  const handleMouseMove = (e) => {
-    if (!isDragging) return;
-    e.preventDefault();
-    const x = e.pageX - containerRef.current.offsetLeft;
-    const walk = (x - startX) * 2;
-    containerRef.current.scrollLeft = scrollLeft - walk;
-  };
-
-  const handleTouchStart = (e) => {
-    setIsDragging(true);
-    setStartX(e.touches[0].clientX);
-  };
-
-  const handleTouchMove = (e) => {
-    if (!isDragging) return;
-    const x = e.touches[0].clientX;
-    const diff = startX - x;
-    if (Math.abs(diff) > 50) {
-      if (diff > 0) {
-        shiftCards('next');
-      } else {
-        shiftCards('prev');
-      }
-      setIsDragging(false);
+  const handleCitySwipe = (e) => {
+    if (!cityContainerRef.current) return;
+    const container = cityContainerRef.current;
+    const threshold = 50;
+    const touch = e.changedTouches[0];
+    const diff = touch.clientX - container.getBoundingClientRect().left;
+    
+    if (diff < threshold && cityStartIndex > 0) {
+      shiftCities('prev');
+    } else if (container.offsetWidth - diff < threshold && cityStartIndex < cities.length - citiesPerView) {
+      shiftCities('next');
     }
   };
 
-  const handleTouchEnd = () => {
-    setIsDragging(false);
+  const handleCardSwipe = (e) => {
+    if (!cardContainerRef.current || !isMobile) return;
+    const container = cardContainerRef.current;
+    const threshold = 50;
+    const touch = e.changedTouches[0];
+    const diff = touch.clientX - container.getBoundingClientRect().left;
+    
+    if (diff < threshold && cardStartIndex > 0) {
+      shiftCards('prev');
+    } else if (container.offsetWidth - diff < threshold && cardStartIndex < filteredPlaces.length - 1) {
+      shiftCards('next');
+    }
   };
 
   const loadMoreCards = () => {
@@ -141,12 +117,10 @@ function ExploreDestinations() {
       return (
         <div className="relative overflow-hidden">
           <div 
-            ref={containerRef}
+            ref={cardContainerRef}
             className="flex transition-transform duration-300 ease-in-out"
             style={{ transform: `translateX(-${cardStartIndex * 100}%)` }}
-            onTouchStart={handleTouchStart}
-            onTouchMove={handleTouchMove}
-            onTouchEnd={handleTouchEnd}
+            onTouchEnd={handleCardSwipe}
           >
             {filteredPlaces.map((place, index) => (
               <div 
@@ -229,16 +203,10 @@ function ExploreDestinations() {
       <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-6 md:mb-8">Explore Destinations</h2>
       <div className="relative mb-6 md:mb-8 overflow-hidden">
         <div 
-          ref={containerRef}
+          ref={cityContainerRef}
           className="flex transition-transform duration-300 ease-in-out"
-          style={{ transform: `translateX(-${startIndex * (100 / citiesPerView)}%)` }}
-          onMouseDown={handleMouseDown}
-          onMouseLeave={handleMouseLeave}
-          onMouseUp={handleMouseUp}
-          onMouseMove={handleMouseMove}
-          onTouchStart={handleTouchStart}
-          onTouchMove={handleTouchMove}
-          onTouchEnd={handleTouchEnd}
+          style={{ transform: `translateX(-${cityStartIndex * (100 / citiesPerView)}%)` }}
+          onTouchEnd={handleCitySwipe}
         >
           {cities.map((city, index) => (
             <button 
@@ -251,7 +219,7 @@ function ExploreDestinations() {
             </button>
           ))}
         </div>
-        {startIndex > 0 && (
+        {cityStartIndex > 0 && (
           <button
             onClick={() => shiftCities('prev')}
             className="absolute left-0 top-1/2 transform -translate-y-1/2 bg-pink-500 hover:bg-pink-600 text-white p-2 rounded-full transition-all duration-300"
@@ -259,7 +227,7 @@ function ExploreDestinations() {
             <FaChevronLeft size={20} />
           </button>
         )}
-        {startIndex < cities.length - citiesPerView && (
+        {cityStartIndex < cities.length - citiesPerView && (
           <button
             onClick={() => shiftCities('next')}
             className="absolute right-0 top-1/2 transform -translate-y-1/2 bg-pink-500 hover:bg-pink-600 text-white p-2 rounded-full transition-all duration-300"

@@ -88,15 +88,21 @@ function ExploreDestinations() {
 
   const handleTouchStart = (e) => {
     setIsDragging(true);
-    setStartX(e.touches[0].pageX - containerRef.current.offsetLeft);
-    setScrollLeft(containerRef.current.scrollLeft);
+    setStartX(e.touches[0].clientX);
   };
 
   const handleTouchMove = (e) => {
     if (!isDragging) return;
-    const x = e.touches[0].pageX - containerRef.current.offsetLeft;
-    const walk = (x - startX) * 2;
-    containerRef.current.scrollLeft = scrollLeft - walk;
+    const x = e.touches[0].clientX;
+    const diff = startX - x;
+    if (Math.abs(diff) > 50) {
+      if (diff > 0) {
+        shiftCards('next');
+      } else {
+        shiftCards('prev');
+      }
+      setIsDragging(false);
+    }
   };
 
   const handleTouchEnd = () => {

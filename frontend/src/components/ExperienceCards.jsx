@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { FaChevronLeft, FaChevronRight } from 'react-icons/fa';
-import { motion, useAnimation } from 'framer-motion';
+import { motion, useAnimation, useDragControls } from 'framer-motion';
 
 const ExperienceCard = ({ image, title }) => (
   <div className="relative rounded-lg overflow-hidden group">
@@ -25,6 +25,7 @@ const ExperienceCards = () => {
   const [cardsPerView, setCardsPerView] = useState(3);
   const containerRef = useRef(null);
   const controls = useAnimation();
+  const dragControls = useDragControls();
 
   useEffect(() => {
     const handleResize = () => {
@@ -44,39 +45,28 @@ const ExperienceCards = () => {
 
   const nextCards = () => {
     if (currentIndex < experiences.length - cardsPerView) {
-      setCurrentIndex(currentIndex + 1);
+      setCurrentIndex(prevIndex => prevIndex + 1);
     }
   };
 
   const prevCards = () => {
     if (currentIndex > 0) {
-      setCurrentIndex(currentIndex - 1);
+      setCurrentIndex(prevIndex => prevIndex - 1);
     }
   };
-
-  useEffect(() => {
-    const handleKeyDown = (event) => {
-      if (event.key === 'ArrowRight') {
-        nextCards();
-      } else if (event.key === 'ArrowLeft') {
-        prevCards();
-      }
-    };
-
-    window.addEventListener('keydown', handleKeyDown);
-    return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [currentIndex, cardsPerView]);
 
   useEffect(() => {
     controls.start({ x: `-${currentIndex * (100 / cardsPerView)}%` });
   }, [currentIndex, cardsPerView, controls]);
 
-  const handleDrag = (event, info) => {
+  const handleDragEnd = (event, info) => {
     const swipeThreshold = 50;
-    if (info.offset.x < -swipeThreshold) {
+    if (info.offset.x < -swipeThreshold && currentIndex < experiences.length - cardsPerView) {
       nextCards();
-    } else if (info.offset.x > swipeThreshold) {
+    } else if (info.offset.x > swipeThreshold && currentIndex > 0) {
       prevCards();
+    } else {
+      controls.start({ x: `-${currentIndex * (100 / cardsPerView)}%` });
     }
   };
 
@@ -86,21 +76,27 @@ const ExperienceCards = () => {
         className="flex gap-4"
         animate={controls}
         drag="x"
+        dragControls={dragControls}
         dragConstraints={containerRef}
-        dragElastic={0.2}
-        onDragEnd={handleDrag}
-        transition={{ type: "spring", stiffness: 300, damping: 30 }}
+        dragElastic={0.1}
+        onDragEnd={handleDragEnd}
+        transition={{ type: "spring", stiffness: 400, damping: 40 }}
       >
         {experiences.map((exp, index) => (
-          <div key={index} className={`w-full sm:w-1/2 md:w-1/3 flex-shrink-0`}>
+          <motion.div 
+            key={index} 
+            className={`w-full sm:w-1/2 md:w-1/3 flex-shrink-0`}
+            whileTap={{ scale: 0.95 }}
+          >
             <ExperienceCard {...exp} />
-          </div>
+          </motion.div>
         ))}
       </motion.div>
       {currentIndex > 0 && (
         <button
           onClick={prevCards}
-          className="absolute left-0 top-1/2 transform -translate-y-1/2 bg-pink-500 hover:bg-pink-600 text-white p-2 rounded-full transition-all duration-300"
+          className="absolute left-0 top-1/2 transform -translate-y-1/2 bg-pink-500 hover:bg-pink-600 text-white p-2 rounded-full transition-all duration-300 focus:outline-none"
+          aria-label="Previous"
         >
           <FaChevronLeft size={20} />
         </button>
@@ -108,7 +104,8 @@ const ExperienceCards = () => {
       {currentIndex < experiences.length - cardsPerView && (
         <button
           onClick={nextCards}
-          className="absolute right-0 top-1/2 transform -translate-y-1/2 bg-pink-500 hover:bg-pink-600 text-white p-2 rounded-full transition-all duration-300"
+          className="absolute right-0 top-1/2 transform -translate-y-1/2 bg-pink-500 hover:bg-pink-600 text-white p-2 rounded-full transition-all duration-300 focus:outline-none"
+          aria-label="Next"
         >
           <FaChevronRight size={20} />
         </button>

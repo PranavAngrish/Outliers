@@ -9,6 +9,7 @@ import RegionDropdown from "./SearchBar/RegionDropdown";
 import GuestMenu from "./SearchBar/GuestMenu";
 import ExperienceCards from "./ExperienceCards";
 import bg from "/src/assets/outliers/campaign.mp4";
+import { Link } from "react-router-dom";
 const NavItem = ({ href, children }) => (
   <a
     href={href}
@@ -55,9 +56,11 @@ const Navbar = () => {
           <NavButton className="bg-white text-black hover:bg-gray-200">
             Host An Experience!
           </NavButton>
-          <NavButton className="bg-pink-500 text-white hover:bg-pink-600">
-            Login
-          </NavButton>
+          <Link to="/auth">
+            <NavButton className="bg-pink-500 text-white hover:bg-pink-600">
+              Log In
+            </NavButton>
+          </Link>
         </div>
         <button
           onClick={() => setShowMobileMenu(!showMobileMenu)}
@@ -81,9 +84,11 @@ const Navbar = () => {
           <NavButton className="w-full bg-black text-white hover:bg-gray-800 mt-2">
             Host An Experience!
           </NavButton>
-          <NavButton className="w-full bg-orange-500 text-white hover:bg-orange-600 mt-2">
-            Login
-          </NavButton>
+          <Link to="/auth" className="block w-full">
+            <NavButton className="w-full bg-pink-500 text-white hover:bg-pink-600 mt-2">
+              Sign In
+            </NavButton>
+          </Link>
         </div>
       )}
     </>

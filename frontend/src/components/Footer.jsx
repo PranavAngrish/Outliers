@@ -89,29 +89,20 @@ function Footer() {
         className="absolute top-0 left-0 w-full h-full pointer-events-none"
       />
       <div className="container mx-auto px-4 relative z-10">
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-8 mb-8">
-          <div>
+        <div className="flex flex-col md:flex-row justify-between mb-8">
+          <div className="mb-8 md:mb-0">
             <h3 className="text-lg font-semibold mb-4 text-white">About Us</h3>
             <ul className="space-y-2">
               <li><a href="#" className="text-gray-400 hover:text-pink-400 transition duration-300">Our Story</a></li>
               <li><a href="#" className="text-gray-400 hover:text-pink-400 transition duration-300">Team</a></li>
-              <li><a href="#" className="text-gray-400 hover:text-pink-400 transition duration-300">Careers</a></li>
             </ul>
           </div>
-          <div>
+          <div className="mb-8 md:mb-0">
             <h3 className="text-lg font-semibold mb-4 text-white">Support</h3>
             <ul className="space-y-2">
               <li><a href="#" className="text-gray-400 hover:text-pink-400 transition duration-300">Help Center</a></li>
               <li><a href="#" className="text-gray-400 hover:text-pink-400 transition duration-300">Safety Information</a></li>
               <li><a href="#" className="text-gray-400 hover:text-pink-400 transition duration-300">Cancellation Options</a></li>
-            </ul>
-          </div>
-          <div>
-            <h3 className="text-lg font-semibold mb-4 text-white">Community</h3>
-            <ul className="space-y-2">
-              <li><a href="#" className="text-gray-400 hover:text-pink-400 transition duration-300">Blog</a></li>
-              <li><a href="#" className="text-gray-400 hover:text-pink-400 transition duration-300">Events</a></li>
-              <li><a href="#" className="text-gray-400 hover:text-pink-400 transition duration-300">Forum</a></li>
             </ul>
           </div>
           <div>

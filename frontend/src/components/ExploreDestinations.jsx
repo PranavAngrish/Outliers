@@ -29,7 +29,7 @@ function ExploreDestinations() {
     const mobile = window.innerWidth < 768;
     setIsMobile(mobile);
     if (mobile) {
-      setCitiesPerView(3);
+      setCitiesPerView(2);
     } else if (window.innerWidth < 1024) {
       setCitiesPerView(3);
     } else {

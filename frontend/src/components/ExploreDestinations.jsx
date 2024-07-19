@@ -1,8 +1,11 @@
 import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { FaChevronLeft, FaChevronRight } from 'react-icons/fa';
+import { useNavigate } from 'react-router-dom';
 
 function ExploreDestinations() {
-  const explorePlaces = [
+  const navigate = useNavigate();
+
+  const exploreExperiences = [
     { name: 'Jaipur', rating: 4.8, image: '/src/assets/outliers/jaipur.jpg', city: 'Delhi' },
     { name: 'Jodhpur', rating: 4.9, image: '/src/assets/outliers/jodhpur.jpg', city: 'Delhi' },
     { name: 'Jaisalmer', rating: 4.9, image: '/src/assets/outliers/jaisalmer.jpg', city: 'Mumbai' },
@@ -99,8 +102,12 @@ function ExploreDestinations() {
   };
 
   const filteredPlaces = selectedCity
-    ? explorePlaces.filter(place => place.city === selectedCity)
-    : explorePlaces;
+    ? exploreExperiences.filter(place => place.city === selectedCity)
+    : exploreExperiences;
+
+  const handleExperienceClick = (experienceName) => {
+    navigate(`/experience/${experienceName.toLowerCase().replace(/\s+/g, '-')}`);
+  };
 
   const renderExploreCards = () => {
     if (isMobile) {
@@ -117,6 +124,7 @@ function ExploreDestinations() {
               <div 
                 key={index} 
                 className="flex-shrink-0 w-full rounded-lg overflow-hidden shadow-lg hover:shadow-xl transition duration-300 transform hover:scale-105 hover:bg-pink-50"
+                onClick={() => handleExperienceClick(place.name)}
               >
                 <img src={place.image} alt={place.name} className="w-full h-48 object-cover" />
                 <div className="p-4">
@@ -154,7 +162,8 @@ function ExploreDestinations() {
             {filteredPlaces.slice(0, visibleCards).map((place, index) => (
               <div 
                 key={index} 
-                className="rounded-lg overflow-hidden shadow-lg hover:shadow-xl transition duration-300 transform hover:scale-105 hover:bg-pink-50"
+                className="rounded-lg overflow-hidden shadow-lg hover:shadow-xl transition duration-300 transform hover:scale-105 hover:bg-pink-50 cursor-pointer"
+                onClick={() => handleExperienceClick(place.name)}
               >
                 <img src={place.image} alt={place.name} className="w-full h-40 sm:h-48 object-cover" />
                 <div className="p-4">

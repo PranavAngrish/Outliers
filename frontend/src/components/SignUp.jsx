@@ -159,7 +159,7 @@ const SignUp = ({ onSignInClick }) => {
         <InputField 
           label="Contact Number" 
           type="tel" 
-          placeholder="Your 10-digit number" 
+          placeholder="10 Digit Number" 
           value={formData.contactnumber} 
           onChange={handleChange} 
           error={errors.contactnumber}

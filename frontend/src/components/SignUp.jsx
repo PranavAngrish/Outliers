@@ -4,7 +4,8 @@ import { FaGoogle, FaEye, FaEyeSlash } from 'react-icons/fa';
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import "./custom-datepicker.css";
-const InputField = ({ label, type, placeholder, value, onChange, error, pattern }) => (
+
+const InputField = ({ label, type, placeholder, value, onChange, error, pattern, maxLength }) => (
   <div className="mb-2">
     <label className="block text-gray-700 text-sm font-bold mb-1" htmlFor={label}>{label}</label>
     <input
@@ -16,6 +17,7 @@ const InputField = ({ label, type, placeholder, value, onChange, error, pattern 
       value={value}
       onChange={onChange}
       pattern={pattern}
+      maxLength={maxLength}
       onKeyPress={(event) => {
         if (pattern && !new RegExp(pattern).test(event.key)) {
           event.preventDefault();
@@ -68,8 +70,8 @@ const SignUp = ({ onSignInClick }) => {
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    if (name === 'contactnumber' && !/^\d*$/.test(value)) {
-      return;  
+    if (name === 'contactnumber' && (!/^\d*$/.test(value) || value.length > 10)) {
+      return;
     }
     setFormData(prevData => ({
       ...prevData,
@@ -91,6 +93,7 @@ const SignUp = ({ onSignInClick }) => {
     if (!formData.email) newErrors.email = "Email is required";
     else if (!/\S+@\S+\.\S+/.test(formData.email)) newErrors.email = "Email is invalid";
     if (!formData.contactnumber) newErrors.contactnumber = "Contact number is required";
+    else if (formData.contactnumber.length !== 10) newErrors.contactnumber = "Contact number must be 10 digits";
     if (!formData.state) newErrors.state = "State is required";
     if (!formData.city) newErrors.city = "City is required";
     if (!formData.password) newErrors.password = "Password is required";
@@ -156,11 +159,12 @@ const SignUp = ({ onSignInClick }) => {
         <InputField 
           label="Contact Number" 
           type="tel" 
-          placeholder="Your number" 
+          placeholder="Your 10-digit number" 
           value={formData.contactnumber} 
           onChange={handleChange} 
           error={errors.contactnumber}
           pattern="\d*"
+          maxLength={10}
         />
         <InputField 
           label="State" 

@@ -1,3 +1,4 @@
+// SignIn.jsx
 import React, { useState } from 'react';
 import { FaGoogle, FaEye, FaEyeSlash } from 'react-icons/fa';
 
@@ -7,6 +8,7 @@ const InputField = ({ label, type, placeholder, value, onChange, error }) => (
     <input
       className={`shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline ${error ? 'border-red-500' : ''}`}
       id={label}
+      name={label.toLowerCase()}
       type={type}
       placeholder={placeholder}
       value={value}
@@ -25,6 +27,7 @@ const PasswordField = ({ value, onChange, error }) => {
         <input
           className={`shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline ${error ? 'border-red-500' : ''}`}
           id="password"
+          name="password"
           type={showPassword ? 'text' : 'password'}
           placeholder="Enter your password"
           value={value}
@@ -47,7 +50,13 @@ const SignIn = ({ onSignUpClick }) => {
   const [formData, setFormData] = useState({ email: '', password: '' });
   const [errors, setErrors] = useState({});
 
-  const handleChange = (e) => setFormData({ ...formData, [e.target.id]: e.target.value });
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setFormData(prevData => ({
+      ...prevData,
+      [name]: value
+    }));
+  };
 
   const validateForm = () => {
     let newErrors = {};
@@ -69,7 +78,7 @@ const SignIn = ({ onSignUpClick }) => {
       <h2 className="text-2xl font-bold text-center text-gray-800 mb-6">Sign In</h2>
       <form onSubmit={handleSubmit}>
         <InputField label="Email" type="email" placeholder="Your email" value={formData.email} onChange={handleChange} error={errors.email} />
-        <PasswordField value={formData.password} onChange={(e) => handleChange({ target: { id: 'password', value: e.target.value } })} error={errors.password} />
+        <PasswordField value={formData.password} onChange={handleChange} error={errors.password} />
         <div className="flex items-center justify-between mb-6">
           <div className="flex items-center">
             <input type="checkbox" id="remember" className="mr-2" />

@@ -1,16 +1,26 @@
+// SignUp.jsx
 import React, { useState } from 'react';
 import { FaGoogle, FaEye, FaEyeSlash } from 'react-icons/fa';
-
-const InputField = ({ label, type, placeholder, value, onChange, error }) => (
+import DatePicker from "react-datepicker";
+import "react-datepicker/dist/react-datepicker.css";
+import "./custom-datepicker.css";
+const InputField = ({ label, type, placeholder, value, onChange, error, pattern }) => (
   <div className="mb-2">
     <label className="block text-gray-700 text-sm font-bold mb-1" htmlFor={label}>{label}</label>
     <input
       className={`shadow appearance-none border rounded w-full py-1 px-2 text-gray-700 leading-tight focus:outline-none focus:shadow-outline ${error ? 'border-red-500' : ''}`}
       id={label}
+      name={label.toLowerCase().replace(' ', '')}
       type={type}
       placeholder={placeholder}
       value={value}
       onChange={onChange}
+      pattern={pattern}
+      onKeyPress={(event) => {
+        if (pattern && !new RegExp(pattern).test(event.key)) {
+          event.preventDefault();
+        }
+      }}
     />
     {error && <p className="text-red-500 text-xs italic">{error}</p>}
   </div>
@@ -25,6 +35,7 @@ const PasswordField = ({ value, onChange, error }) => {
         <input
           className={`shadow appearance-none border rounded w-full py-1 px-2 text-gray-700 leading-tight focus:outline-none focus:shadow-outline ${error ? 'border-red-500' : ''}`}
           id="password"
+          name="password"
           type={showPassword ? 'text' : 'password'}
           placeholder="Create a strong password"
           value={value}
@@ -44,19 +55,44 @@ const PasswordField = ({ value, onChange, error }) => {
 };
 
 const SignUp = ({ onSignInClick }) => {
-  const [formData, setFormData] = useState({ name: '', age: '', email: '', contactNumber: '', addressState: '', addressCity: '', password: '' });
+  const [formData, setFormData] = useState({
+    name: '',
+    dob: null,
+    email: '',
+    contactnumber: '',
+    state: '',
+    city: '',
+    password: ''
+  });
   const [errors, setErrors] = useState({});
 
-  const handleChange = (e) => setFormData({ ...formData, [e.target.id]: e.target.value });
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    if (name === 'contactnumber' && !/^\d*$/.test(value)) {
+      return;  
+    }
+    setFormData(prevData => ({
+      ...prevData,
+      [name]: value
+    }));
+  };
+
+  const handleDateChange = (date) => {
+    setFormData(prevData => ({
+      ...prevData,
+      dob: date
+    }));
+  };
 
   const validateForm = () => {
     let newErrors = {};
     if (!formData.name) newErrors.name = "Name is required";
-    if (!formData.age) newErrors.age = "Age is required";
+    if (!formData.dob) newErrors.dob = "Date of Birth is required";
     if (!formData.email) newErrors.email = "Email is required";
-    if (!formData.contactNumber) newErrors.contactNumber = "Contact number is required";
-    if (!formData.addressState) newErrors.addressState = "State is required";
-    if (!formData.addressCity) newErrors.addressCity = "City is required";
+    else if (!/\S+@\S+\.\S+/.test(formData.email)) newErrors.email = "Email is invalid";
+    if (!formData.contactnumber) newErrors.contactnumber = "Contact number is required";
+    if (!formData.state) newErrors.state = "State is required";
+    if (!formData.city) newErrors.city = "City is required";
     if (!formData.password) newErrors.password = "Password is required";
     else if (!/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/.test(formData.password)) {
       newErrors.password = "Password must be at least 8 characters long and include uppercase, lowercase, number, and special character";
@@ -76,14 +112,76 @@ const SignUp = ({ onSignInClick }) => {
     <div className="w-full">
       <h2 className="text-2xl font-bold text-center text-gray-800 mb-4">Sign Up</h2>
       <form onSubmit={handleSubmit} className="grid grid-cols-2 gap-x-4">
-        <InputField label="Name" type="text" placeholder="Your name" value={formData.name} onChange={handleChange} error={errors.name} />
-        <InputField label="Age" type="number" placeholder="Your age" value={formData.age} onChange={handleChange} error={errors.age} />
-        <InputField label="Email" type="email" placeholder="Your email" value={formData.email} onChange={handleChange} error={errors.email} />
-        <InputField label="Contact Number" type="tel" placeholder="Your number" value={formData.contactNumber} onChange={handleChange} error={errors.contactNumber} />
-        <InputField label="State" type="text" placeholder="Your state" value={formData.addressState} onChange={handleChange} error={errors.addressState} />
-        <InputField label="City" type="text" placeholder="Your city" value={formData.addressCity} onChange={handleChange} error={errors.addressCity} />
+        <InputField 
+          label="Name" 
+          type="text" 
+          placeholder="Your name" 
+          value={formData.name} 
+          onChange={handleChange} 
+          error={errors.name} 
+          pattern="[A-Za-z\s]+"
+        />
+        <div className="mb-2">
+          <label className="block text-gray-700 text-sm font-bold mb-1" htmlFor="dob">Date of Birth</label>
+          <DatePicker
+              selected={formData.dob}
+              onChange={handleDateChange}
+              maxDate={new Date()}
+              showYearDropdown
+              scrollableYearDropdown
+              yearDropdownItemNumber={100}
+              dropdownMode="select"
+              className={`shadow appearance-none border rounded w-full py-1 px-2 text-gray-700 leading-tight focus:outline-none focus:shadow-outline ${errors.dob ? 'border-red-500' : ''}`}
+              placeholderText="MM/DD/YYYY"
+              dateFormat="MM/dd/yyyy"
+              popperPlacement="bottom-start"
+              popperModifiers={{
+                preventOverflow: {
+                  enabled: true,
+                  escapeWithReference: false,
+                  boundariesElement: "viewport"
+                }
+              }}
+            />
+          {errors.dob && <p className="text-red-500 text-xs italic">{errors.dob}</p>}
+        </div>
+        <InputField 
+          label="Email" 
+          type="email" 
+          placeholder="Your email" 
+          value={formData.email} 
+          onChange={handleChange} 
+          error={errors.email}
+        />
+        <InputField 
+          label="Contact Number" 
+          type="tel" 
+          placeholder="Your number" 
+          value={formData.contactnumber} 
+          onChange={handleChange} 
+          error={errors.contactnumber}
+          pattern="\d*"
+        />
+        <InputField 
+          label="State" 
+          type="text" 
+          placeholder="Your state" 
+          value={formData.state} 
+          onChange={handleChange} 
+          error={errors.state}
+          pattern="[A-Za-z\s]+"
+        />
+        <InputField 
+          label="City" 
+          type="text" 
+          placeholder="Your city" 
+          value={formData.city} 
+          onChange={handleChange} 
+          error={errors.city}
+          pattern="[A-Za-z\s]+"
+        />
         <div className="col-span-2">
-          <PasswordField value={formData.password} onChange={(e) => handleChange({ target: { id: 'password', value: e.target.value } })} error={errors.password} />
+          <PasswordField value={formData.password} onChange={handleChange} error={errors.password} />
         </div>
         <button type="submit" className="col-span-2 mt-2 bg-pink-500 hover:bg-pink-600 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline transition duration-300">
           Sign Up

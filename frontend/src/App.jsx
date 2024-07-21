@@ -6,7 +6,6 @@ import Gallery from "./components/Gallery.jsx";
 import Footer from "./components/Footer.jsx";
 import AuthForm from './components/AuthForm.jsx';
 import ExperienceDetails from './components/EXPERIENCES/ExperienceDetails.jsx';
-
 // Add this array of experiences
 const experiences = [
   { 

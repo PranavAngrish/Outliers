@@ -8,7 +8,6 @@ const GuestInput = ({ icon, totalGuests, onToggle, isActive, className }) => (
     <div className="absolute left-3 top-1/2 transform -translate-y-1/2">
       {icon}
     </div>
-    <span className="font-medium">Who</span>
     {totalGuests > 0 && (
       <span className="ml-2">
         {`${totalGuests} guest${totalGuests !== 1 ? 's' : ''}`}

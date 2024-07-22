@@ -5,6 +5,7 @@ import ExploreDestinations from "./components/ExploreDestinations.jsx";
 import Gallery from "./components/Gallery.jsx";
 import Footer from "./components/Footer.jsx";
 import AuthForm from './components/AuthForm.jsx';
+import Test from './components/adminpanel/AdminPanel.jsx'
 import ExperienceDetails from './components/EXPERIENCES/ExperienceDetails.jsx';
 // Add this array of experiences
 const experiences = [
@@ -68,6 +69,7 @@ function App() {
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/auth" element={<AuthForm />} />
+        <Route path="/test" element={<Test />} />
         <Route 
           path="/experience/:experienceName" 
           element={<ExperienceDetails experiences={experiences} />} 

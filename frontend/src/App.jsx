@@ -7,6 +7,7 @@ import Footer from "./components/Footer.jsx";
 import AuthForm from './components/AuthForm.jsx';
 import Test from './components/adminpanel/AdminPanel.jsx'
 import ExperienceDetails from './components/EXPERIENCES/ExperienceDetails.jsx';
+import udaipur from "/src/assets/outliers/udaipur.jpg";
 // Add this array of experiences
 const experiences = [
   { 
@@ -32,7 +33,7 @@ const experiences = [
     similarExperiences: [
       { 
         name: "Udaipur Lake Tour", 
-        image: "/src/assets/outliers/udaipur.jpg", 
+        image: udaipur, 
         description: "Explore the City of Lakes" 
       }
     ],

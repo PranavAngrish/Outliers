@@ -10,6 +10,12 @@ import GuestMenu from "./SearchBar/GuestMenu";
 import ExperienceCards from "./ExperienceCards";
 import bg from "/src/assets/outliers/campaign.mp4";
 import { Link } from "react-router-dom";
+import MAP1 from "/src/assets/outliers/MAPjaipur.png";
+import MAP2 from "/src/assets/outliers/MAPbikaner.png";
+import MAP3 from "/src/assets/outliers/MAPjaisalmer.png";
+import MAP4 from "/src/assets/outliers/MAPjodhpur.png";
+import MAP5 from "/src/assets/outliers/MAPudaipur.png";
+import MAP6 from "/src/assets/outliers/MAPrajasthan.png";
 const NavItem = ({ href, children }) => (
   <a
     href={href}
@@ -105,14 +111,14 @@ const SearchBar = () => {
   const guestMenuRef = useRef(null);
 
   const regions = [
-    { name: "Jaipur", icon: "/src/assets/outliers/MAPjaipur.png" },
-    { name: "Bikaner", icon: "/src/assets/outliers/MAPbikaner.png" },
-    { name: "Jaisalmer", icon: "/src/assets/outliers/MAPjaisalmer.png" },
-    { name: "Jodhpur", icon: "/src/assets/outliers/MAPjodhpur.png" },
-    { name: "Udaipur", icon: "/src/assets/outliers/MAPudaipur.png" },
+    { name: "Jaipur", icon: MAP1 },
+    { name: "Bikaner", icon: MAP2 },
+    { name: "Jaisalmer", icon: MAP3 },
+    { name: "Jodhpur", icon: MAP4 },
+    { name: "Udaipur", icon: MAP5 },
     {
       name: "Anywhere in Rajasthan",
-      icon: "/src/assets/outliers/MAPrajasthan.png",
+      icon: MAP6,
     },
   ];
 

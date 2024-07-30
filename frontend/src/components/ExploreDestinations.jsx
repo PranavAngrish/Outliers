@@ -1,18 +1,26 @@
 import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { FaChevronLeft, FaChevronRight } from 'react-icons/fa';
 import { useNavigate } from 'react-router-dom';
+import jaipur from "/src/assets/outliers/jaipur.jpg";
+import jodhpur from "/src/assets/outliers/jodhpur.jpg";
+import jaisalmer from "/src/assets/outliers/jaisalmer.jpg";
+import udaipur from "/src/assets/outliers/udaipur.jpg";
+import bikaner from "/src/assets/outliers/bikaner.jpg";
+import ajmer from "/src/assets/outliers/Ajmer.jpg";
+
+
 
 function ExploreDestinations() {
   const navigate = useNavigate();
 
   const exploreExperiences = [
-    { name: 'Jaipur', rating: 4.8, image: '/src/assets/outliers/jaipur.jpg', city: 'Delhi' },
-    { name: 'Jodhpur', rating: 4.9, image: '/src/assets/outliers/jodhpur.jpg', city: 'Delhi' },
-    { name: 'Jaisalmer', rating: 4.9, image: '/src/assets/outliers/jaisalmer.jpg', city: 'Mumbai' },
-    { name: 'Udaipur', rating: 4.8, image: '/src/assets/outliers/udaipur.jpg', city: 'Mumbai' },
-    { name: 'Bikaner', rating: 4.7, image: '/src/assets/outliers/bikaner.jpg', city: 'Bangalore' },
-    { name: 'Ajmer', rating: 4.8, image: '/src/assets/outliers/Ajmer.jpg', city: 'Bangalore' },
-    { name: 'Pushkar', rating: 4.7, image: '/src/assets/outliers/pushkar.jpg', city: 'Kolkata' },
+    { name: 'Jaipur', rating: 4.8, image: jaipur, city: 'Delhi' },
+    { name: 'Jodhpur', rating: 4.9, image: jodhpur, city: 'Delhi' },
+    { name: 'Jaisalmer', rating: 4.9, image: jaisalmer, city: 'Mumbai' },
+    { name: 'Udaipur', rating: 4.8, image: udaipur, city: 'Mumbai' },
+    { name: 'Bikaner', rating: 4.7, image: bikaner, city: 'Bangalore' },
+    { name: 'Ajmer', rating: 4.8, image: ajmer, city: 'Bangalore' },
+    { name: 'Pushkar', rating: 4.7, image: ajmer, city: 'Kolkata' },
     { name: 'Mount Abu', rating: 4.6, image: '/src/assets/outliers/mount_abu.jpg', city: 'Chennai' },
     { name: 'Chittorgarh', rating: 4.8, image: '/src/assets/outliers/chittorgarh.jpg', city: 'Hyderabad' },
     { name: 'Chittorgarh', rating: 4.8, image: '/src/assets/outliers/chittorgarh.jpg', city: 'Ahmedabad' },

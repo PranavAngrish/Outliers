@@ -1,12 +1,16 @@
 import React from 'react';
-
+import g1 from "/src/assets/outliers/gallery1.avif";
+import g2 from "/src/assets/outliers/gallery2.jpeg";
+import g3 from "/src/assets/outliers/gallery3.jpg";
+import g4 from "/src/assets/outliers/gallery4.png";
+import g5 from "/src/assets/outliers/gallery5.jpg";
 function Gallery() {
   const galleryImages = [
-    { src: "/src/assets/outliers/gallery1.avif", alt: "" },
-    { src: "/src/assets/outliers/gallery2.jpeg", alt: "" },
-    { src: "/src/assets/outliers/gallery3.jpg", alt: "" },
-    { src: "/src/assets/outliers/gallery4.png", alt: "" },
-    { src: "/src/assets/outliers/gallery5.jpg", alt: "" },
+    { src: g1, alt: "" },
+    { src: g2, alt: "" },
+    { src: g3, alt: "" },
+    { src: g4, alt: "" },
+    { src: g5, alt: "" },
   ];
 
   return (

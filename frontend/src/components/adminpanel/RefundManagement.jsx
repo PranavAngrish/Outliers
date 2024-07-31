@@ -13,39 +13,47 @@ const RefundManagement = () => {
   };
 
   return (
-    <div className="p-6">
-      <h2 className="text-2xl font-bold mb-4">Refund Management</h2>
-      <table className="w-full bg-white shadow-md rounded-lg overflow-hidden">
-        <thead className="bg-gray-100">
-          <tr>
-            <th className="p-3 text-left">ID</th>
-            <th className="p-3 text-left">User</th>
-            <th className="p-3 text-left">Amount</th>
-            <th className="p-3 text-left">Status</th>
-            <th className="p-3 text-left">Actions</th>
-          </tr>
-        </thead>
-        <tbody>
-          {refunds.map((refund) => (
-            <tr key={refund.id} className="border-t">
-              <td className="p-3">{refund.id}</td>
-              <td className="p-3">{refund.user}</td>
-              <td className="p-3">${refund.amount}</td>
-              <td className="p-3">{refund.status}</td>
-              <td className="p-3">
-                {refund.status === 'Pending' && (
-                  <button 
-                    className="bg-yellow-500 text-white px-2 py-1 rounded hover:bg-yellow-600 transition-colors"
-                    onClick={() => processRefund(refund.id)}
-                  >
-                    Process Refund
-                  </button>
-                )}
-              </td>
+    <div className="space-y-6">
+      <h2 className="text-3xl font-bold text-gray-800">Refund Management</h2>
+      <div className="bg-white shadow-md rounded-lg overflow-hidden">
+        <table className="w-full">
+          <thead className="bg-gray-50">
+            <tr>
+              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">ID</th>
+              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">User</th>
+              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Amount</th>
+              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
+              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
             </tr>
-          ))}
-        </tbody>
-      </table>
+          </thead>
+          <tbody className="bg-white divide-y divide-gray-200">
+            {refunds.map((refund) => (
+              <tr key={refund.id}>
+                <td className="px-6 py-4 whitespace-nowrap">{refund.id}</td>
+                <td className="px-6 py-4 whitespace-nowrap">{refund.user}</td>
+                <td className="px-6 py-4 whitespace-nowrap">${refund.amount}</td>
+                <td className="px-6 py-4 whitespace-nowrap">
+                  <span className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${
+                    refund.status === 'Pending' ? 'bg-yellow-100 text-yellow-800' : 'bg-green-100 text-green-800'
+                  }`}>
+                    {refund.status}
+                  </span>
+                </td>
+                <td className="px-6 py-4 whitespace-nowrap">
+                  {refund.status === 'Pending' && (
+                    <button 
+                      className="bg-black text-white px-3 py-1 rounded-md hover:bg-gray-800 transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-opacity-50"
+                      onClick={() => processRefund(refund.id)}
+                    >
+                      Process Refund
+                    </button>
+                  )}
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
     </div>
   );
 };

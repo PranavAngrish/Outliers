@@ -6,25 +6,23 @@ import VendorManagement from './VendorManagement';
 import ExperienceManagement from './ExperienceManagement';
 import UserManagement from './UserManagement';
 import RefundManagement from './RefundManagement';
-import Settings from './Settings';
 
 const AdminPanel = () => {
   const [activeMenu, setActiveMenu] = useState('Dashboard');
+  const [selectedVendor, setSelectedVendor] = useState(null);
 
   const renderContent = () => {
     switch (activeMenu) {
       case 'Dashboard':
         return <Dashboard />;
       case 'Vendors':
-        return <VendorManagement />;
+        return <VendorManagement setSelectedVendor={setSelectedVendor} />;
       case 'Experiences':
-        return <ExperienceManagement />;
+        return <ExperienceManagement setActiveMenu={setActiveMenu} setSelectedVendor={setSelectedVendor} />;
       case 'Users':
         return <UserManagement />;
       case 'Refunds':
         return <RefundManagement />;
-      case 'Settings':
-        return <Settings />;
       default:
         return <Dashboard />;
     }
@@ -35,7 +33,7 @@ const AdminPanel = () => {
       <Sidebar setActiveMenu={setActiveMenu} activeMenu={activeMenu} />
       <div className="flex flex-col flex-1 overflow-hidden">
         <Header />
-        <main className="flex-1 overflow-x-hidden overflow-y-auto bg-gray-200">
+        <main className="flex-1 overflow-x-hidden overflow-y-auto bg-gray-100 p-6">
           {renderContent()}
         </main>
       </div>

@@ -1,6 +1,6 @@
-// ExperienceManagement.jsx
 import React, { useState } from 'react';
 import { FaEye, FaLink, FaEdit, FaTrash, FaCheck, FaTimes, FaPlus } from 'react-icons/fa';
+import CreateExperience from './createExperience/CreateExperience.jsx';
 
 const ExperienceManagement = ({ setActiveMenu, setSelectedVendor }) => {
   const [experiences, setExperiences] = useState([
@@ -19,23 +19,6 @@ const ExperienceManagement = ({ setActiveMenu, setSelectedVendor }) => {
   const [searchTerm, setSearchTerm] = useState('');
   const [pendingSearchTerm, setPendingSearchTerm] = useState('');
   const [isCreatingExperience, setIsCreatingExperience] = useState(false);
-  const [newExperience, setNewExperience] = useState({
-    name: '',
-    vendor: '',
-    description: '',
-    price: '',
-  });
-
-  const handleCreateExperience = () => {
-    setIsCreatingExperience(true);
-  };
-
-  const handleSaveExperience = (e) => {
-    e.preventDefault();
-    setPendingExperiences([...pendingExperiences, { ...newExperience, id: Date.now(), status: 'Pending' }]);
-    setIsCreatingExperience(false);
-    setNewExperience({ name: '', vendor: '', description: '', price: '' });
-  };
 
   const handleSearch = (e, isPending = false) => {
     isPending ? setPendingSearchTerm(e.target.value) : setSearchTerm(e.target.value);
@@ -147,7 +130,7 @@ const ExperienceManagement = ({ setActiveMenu, setSelectedVendor }) => {
         {!isCreatingExperience && (
           <button
             className="bg-black text-white px-4 py-2 rounded-md hover:bg-gray-800 transition-colors duration-200 flex items-center"
-            onClick={handleCreateExperience}
+            onClick={() => setIsCreatingExperience(true)}
           >
             <FaPlus className="mr-2" /> Create new experience
           </button>
@@ -155,78 +138,10 @@ const ExperienceManagement = ({ setActiveMenu, setSelectedVendor }) => {
       </div>
       
       {isCreatingExperience ? (
-        <form onSubmit={handleSaveExperience} className="bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4">
-          <div className="mb-4">
-            <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="name">
-              Experience Name
-            </label>
-            <input
-              className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-              id="name"
-              type="text"
-              placeholder="Experience Name"
-              value={newExperience.name}
-              onChange={(e) => setNewExperience({...newExperience, name: e.target.value})}
-              required
-            />
-          </div>
-          <div className="mb-4">
-            <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="vendor">
-              Vendor
-            </label>
-            <input
-              className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-              id="vendor"
-              type="text"
-              placeholder="Vendor"
-              value={newExperience.vendor}
-              onChange={(e) => setNewExperience({...newExperience, vendor: e.target.value})}
-              required
-            />
-          </div>
-          <div className="mb-4">
-            <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="description">
-              Description
-            </label>
-            <textarea
-              className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-              id="description"
-              placeholder="Description"
-              value={newExperience.description}
-              onChange={(e) => setNewExperience({...newExperience, description: e.target.value})}
-              required
-            />
-          </div>
-          <div className="mb-4">
-            <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="price">
-              Price
-            </label>
-            <input
-              className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-              id="price"
-              type="number"
-              placeholder="Price"
-              value={newExperience.price}
-              onChange={(e) => setNewExperience({...newExperience, price: e.target.value})}
-              required
-            />
-          </div>
-          <div className="flex items-center justify-between">
-            <button
-              className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
-              type="submit"
-            >
-              Create Experience
-            </button>
-            <button
-              className="bg-gray-500 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
-              type="button"
-              onClick={() => setIsCreatingExperience(false)}
-            >
-              Cancel
-            </button>
-          </div>
-        </form>
+        <CreateExperience 
+          setPendingExperiences={setPendingExperiences} 
+          setIsCreatingExperience={setIsCreatingExperience}
+        />
       ) : (
         <>
           <input

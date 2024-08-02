@@ -52,6 +52,14 @@ const ExperienceManagement = ({ setActiveMenu, setSelectedVendor }) => {
     setActiveMenu('Vendors');
   };
 
+  const handleCreateExperience = (newExperience) => {
+    setPendingExperiences(prevExperiences => [
+      ...prevExperiences,
+      { ...newExperience, id: Date.now(), status: 'Pending', vendor: { id: Date.now(), name: 'New Vendor' } }
+    ]);
+    setIsCreatingExperience(false);
+  };
+
   const ExperienceTable = ({ experiences, isPending }) => (
     <table className="w-full bg-white shadow-md rounded-lg overflow-hidden">
       <thead className="bg-gray-50">
@@ -139,7 +147,7 @@ const ExperienceManagement = ({ setActiveMenu, setSelectedVendor }) => {
       
       {isCreatingExperience ? (
         <CreateExperience 
-          setPendingExperiences={setPendingExperiences} 
+          setPendingExperiences={handleCreateExperience}
           setIsCreatingExperience={setIsCreatingExperience}
         />
       ) : (

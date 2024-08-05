@@ -1,19 +1,21 @@
 import React, { useState } from 'react';
 import { FaEye, FaLink, FaEdit, FaTrash, FaCheck, FaTimes, FaPlus } from 'react-icons/fa';
 import CreateExperience from './createExperience/CreateExperience.jsx';
+import DatePicker from 'react-datepicker';
+import "react-datepicker/dist/react-datepicker.css";
 
 const ExperienceManagement = ({ setActiveMenu, setSelectedVendor }) => {
   const [experiences, setExperiences] = useState([
-    { id: 1, name: 'Floating Feni Experience', status: 'Live', bookings: 618, vendor: { id: 1, name: 'Goa Adventures' } },
-    { id: 2, name: 'Slaves and Sultans of Qutub with Shah Umar', status: 'Live', bookings: 28, vendor: { id: 2, name: 'Delhi Heritage Walks' } },
-    { id: 3, name: 'One Heart, Two Worlds: A Walk of Jew Town', status: 'Live', bookings: 13, vendor: { id: 3, name: 'Kerala Explorations' } },
-    { id: 4, name: 'A Day Trip to Kracadawna Farm', status: 'Live', bookings: 0, vendor: { id: 4, name: 'Farm Stays India' } },
-    { id: 7, name: "Exploring Sultan Ghari - Delhi's First Mausoleum", status: 'Live', bookings: 21, vendor: { id: 2, name: 'Delhi Heritage Walks' } },
+    { id: 1, name: 'Floating Feni Experience', status: 'Live', bookings: 618, vendor: { id: 1, name: 'Goa Adventures' }, startDate: new Date(), endDate: new Date(), startTime: new Date(), endTime: new Date(new Date().getTime() + 2 * 60 * 60 * 1000), duration: 2 },
+    { id: 2, name: 'Slaves and Sultans of Qutub with Shah Umar', status: 'Live', bookings: 28, vendor: { id: 2, name: 'Delhi Heritage Walks' }, startDate: new Date(), endDate: new Date(), startTime: new Date(), endTime: new Date(new Date().getTime() + 3 * 60 * 60 * 1000), duration: 3 },
+    { id: 3, name: 'One Heart, Two Worlds: A Walk of Jew Town', status: 'Live', bookings: 13, vendor: { id: 3, name: 'Kerala Explorations' }, startDate: new Date(), endDate: new Date(), startTime: new Date(), endTime: new Date(new Date().getTime() + 1.5 * 60 * 60 * 1000), duration: 1.5 },
+    { id: 4, name: 'A Day Trip to Kracadawna Farm', status: 'Live', bookings: 0, vendor: { id: 4, name: 'Farm Stays India' }, startDate: new Date(), endDate: new Date(), startTime: new Date(), endTime: new Date(new Date().getTime() + 6 * 60 * 60 * 1000), duration: 6 },
+    { id: 7, name: "Exploring Sultan Ghari - Delhi's First Mausoleum", status: 'Live', bookings: 21, vendor: { id: 2, name: 'Delhi Heritage Walks' }, startDate: new Date(), endDate: new Date(), startTime: new Date(), endTime: new Date(new Date().getTime() + 2.5 * 60 * 60 * 1000), duration: 2.5 },
   ]);
 
   const [pendingExperiences, setPendingExperiences] = useState([
-    { id: 5, name: 'Of Rains, Rivers and Root Bridges, Meghalaya', status: 'Pending', vendor: { id: 5, name: 'Northeast Trekkers' } },
-    { id: 6, name: 'Of Valleys and Warriors, an Angami Chapter, Nagaland', status: 'Pending', vendor: { id: 5, name: 'Northeast Trekkers' } },
+    { id: 5, name: 'Of Rains, Rivers and Root Bridges, Meghalaya', status: 'Pending', vendor: { id: 5, name: 'Northeast Trekkers' }, startDate: new Date(), endDate: new Date(), startTime: new Date(), endTime: new Date(new Date().getTime() + 4 * 60 * 60 * 1000), duration: 4 },
+    { id: 6, name: 'Of Valleys and Warriors, an Angami Chapter, Nagaland', status: 'Pending', vendor: { id: 5, name: 'Northeast Trekkers' }, startDate: new Date(), endDate: new Date(), startTime: new Date(), endTime: new Date(new Date().getTime() + 5 * 60 * 60 * 1000), duration: 5 },
   ]);
 
   const [searchTerm, setSearchTerm] = useState('');
@@ -52,12 +54,42 @@ const ExperienceManagement = ({ setActiveMenu, setSelectedVendor }) => {
     setActiveMenu('Vendors');
   };
 
+  const calculateDuration = (startTime, endTime) => {
+    const diff = endTime.getTime() - startTime.getTime();
+    return Math.round((diff / (1000 * 60 * 60)) * 10) / 10; // Round to 1 decimal place
+  };
+
   const handleCreateExperience = (newExperience) => {
+    const duration = calculateDuration(newExperience.startTime, newExperience.endTime);
     setPendingExperiences(prevExperiences => [
       ...prevExperiences,
-      { ...newExperience, id: Date.now(), status: 'Pending', vendor: { id: Date.now(), name: 'New Vendor' } }
+      { 
+        ...newExperience, 
+        id: Date.now(), 
+        status: 'Pending', 
+        vendor: { id: Date.now(), name: 'New Vendor' },
+        startDate: newExperience.startDate || new Date(),
+        endDate: newExperience.endDate || new Date(),
+        startTime: newExperience.startTime || new Date(),
+        endTime: newExperience.endTime || new Date(),
+        duration: duration
+      }
     ]);
     setIsCreatingExperience(false);
+  };
+
+  const updateExperience = (exp, field, value, isPending) => {
+    const updatedExperiences = isPending ? [...pendingExperiences] : [...experiences];
+    const index = updatedExperiences.findIndex(e => e.id === exp.id);
+    updatedExperiences[index] = { ...updatedExperiences[index], [field]: value };
+    
+    if (field === 'startTime' || field === 'endTime') {
+      const startTime = field === 'startTime' ? value : updatedExperiences[index].startTime;
+      const endTime = field === 'endTime' ? value : updatedExperiences[index].endTime;
+      updatedExperiences[index].duration = calculateDuration(startTime, endTime);
+    }
+    
+    isPending ? setPendingExperiences(updatedExperiences) : setExperiences(updatedExperiences);
   };
 
   const ExperienceTable = ({ experiences, isPending }) => (
@@ -66,6 +98,11 @@ const ExperienceManagement = ({ setActiveMenu, setSelectedVendor }) => {
         <tr>
           <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Experiences</th>
           <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Vendor</th>
+          <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Start Date</th>
+          <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">End Date</th>
+          <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Start Time</th>
+          <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">End Time</th>
+          <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Duration (hours)</th>
           <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Links</th>
           <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
           {!isPending && <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Bookings</th>}
@@ -84,6 +121,47 @@ const ExperienceManagement = ({ setActiveMenu, setSelectedVendor }) => {
                 {exp.vendor.name}
               </span>
             </td>
+            <td className="px-6 py-4 whitespace-nowrap">
+              <DatePicker
+                selected={exp.startDate}
+                onChange={(date) => updateExperience(exp, 'startDate', date, isPending)}
+                dateFormat="MMMM d, yyyy"
+                className="border rounded p-1"
+              />
+            </td>
+            <td className="px-6 py-4 whitespace-nowrap">
+              <DatePicker
+                selected={exp.endDate}
+                onChange={(date) => updateExperience(exp, 'endDate', date, isPending)}
+                dateFormat="MMMM d, yyyy"
+                className="border rounded p-1"
+              />
+            </td>
+            <td className="px-6 py-4 whitespace-nowrap">
+              <DatePicker
+                selected={exp.startTime}
+                onChange={(time) => updateExperience(exp, 'startTime', time, isPending)}
+                showTimeSelect
+                showTimeSelectOnly
+                timeIntervals={15}
+                timeCaption="Time"
+                dateFormat="h:mm aa"
+                className="border rounded p-1"
+              />
+            </td>
+            <td className="px-6 py-4 whitespace-nowrap">
+              <DatePicker
+                selected={exp.endTime}
+                onChange={(time) => updateExperience(exp, 'endTime', time, isPending)}
+                showTimeSelect
+                showTimeSelectOnly
+                timeIntervals={15}
+                timeCaption="Time"
+                dateFormat="h:mm aa"
+                className="border rounded p-1"
+              />
+            </td>
+            <td className="px-6 py-4 whitespace-nowrap">{exp.duration}</td>
             <td className="px-6 py-4 whitespace-nowrap">
               <FaEye className="inline mr-2 cursor-pointer text-gray-600 hover:text-gray-900 text-xl" />
               <FaLink className="inline cursor-pointer text-gray-600 hover:text-gray-900 text-xl" />

@@ -8,8 +8,6 @@ import udaipur from "/src/assets/outliers/udaipur.jpg";
 import bikaner from "/src/assets/outliers/bikaner.jpg";
 import ajmer from "/src/assets/outliers/Ajmer.jpg";
 
-
-
 function ExploreDestinations() {
   const navigate = useNavigate();
 
@@ -131,7 +129,7 @@ function ExploreDestinations() {
             {filteredPlaces.map((place, index) => (
               <div 
                 key={index} 
-                className="flex-shrink-0 w-full rounded-lg overflow-hidden shadow-lg hover:shadow-xl transition duration-300 transform hover:scale-105 hover:bg-pink-50"
+                className="flex-shrink-0 w-full rounded-lg overflow-hidden shadow-lg hover:shadow-xl transition duration-300 transform hover:scale-105 bg-white"
                 onClick={() => handleExperienceClick(place.name)}
               >
                 <img src={place.image} alt={place.name} className="w-full h-48 object-cover" />
@@ -148,7 +146,7 @@ function ExploreDestinations() {
           {cardStartIndex > 0 && (
             <button
               onClick={() => shiftCards('prev')}
-              className="absolute left-2 top-1/2 transform -translate-y-1/2 bg-white bg-opacity-50 hover:bg-opacity-75 text-pink-500 p-2 rounded-full transition-all duration-300"
+              className="absolute left-2 top-1/2 transform -translate-y-1/2 bg-white bg-opacity-75 hover:bg-opacity-100 text-pink-500 p-2 rounded-full transition-all duration-300 shadow-md"
             >
               <FaChevronLeft size={20} />
             </button>
@@ -156,7 +154,7 @@ function ExploreDestinations() {
           {cardStartIndex < filteredPlaces.length - 1 && (
             <button
               onClick={() => shiftCards('next')}
-              className="absolute right-2 top-1/2 transform -translate-y-1/2 bg-white bg-opacity-50 hover:bg-opacity-75 text-pink-500 p-2 rounded-full transition-all duration-300"
+              className="absolute right-2 top-1/2 transform -translate-y-1/2 bg-white bg-opacity-75 hover:bg-opacity-100 text-pink-500 p-2 rounded-full transition-all duration-300 shadow-md"
             >
               <FaChevronRight size={20} />
             </button>
@@ -170,7 +168,7 @@ function ExploreDestinations() {
             {filteredPlaces.slice(0, visibleCards).map((place, index) => (
               <div 
                 key={index} 
-                className="rounded-lg overflow-hidden shadow-lg hover:shadow-xl transition duration-300 transform hover:scale-105 hover:bg-pink-50 cursor-pointer"
+                className="rounded-lg overflow-hidden shadow-lg hover:shadow-xl transition duration-300 transform hover:scale-105 bg-white cursor-pointer"
                 onClick={() => handleExperienceClick(place.name)}
               >
                 <img src={place.image} alt={place.name} className="w-full h-40 sm:h-48 object-cover" />
@@ -187,14 +185,14 @@ function ExploreDestinations() {
           <div className="text-center mt-8">
             {visibleCards < filteredPlaces.length ? (
               <button 
-                className="bg-pink-500 hover:bg-pink-600 text-white font-bold py-2 px-4 rounded-full transition duration-300"
+                className="bg-pink-500 hover:bg-pink-600 text-white font-bold py-2 px-6 rounded-full transition duration-300 shadow-md"
                 onClick={loadMoreCards}
               >
                 View More Experiences
               </button>
             ) : visibleCards > 6 ? (
               <button 
-                className="bg-pink-500 hover:bg-pink-600 text-white font-bold py-2 px-4 rounded-full transition duration-300"
+                className="bg-pink-500 hover:bg-pink-600 text-white font-bold py-2 px-6 rounded-full transition duration-300 shadow-md"
                 onClick={showLessCards}
               >
                 Show Less
@@ -207,9 +205,9 @@ function ExploreDestinations() {
   };
 
   return (
-    <div ref={sectionRef} className="py-8 md:py-16 px-4 md:px-8">
-      <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-6 md:mb-8">Explore Destinations</h2>
-      <div className="relative mb-6 md:mb-8 overflow-hidden">
+    <div ref={sectionRef} className="py-12 md:py-20 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto">
+      <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold mb-8 md:mb-12 text-gray-800">Explore Destinations</h2>
+      <div className="relative mb-8 md:mb-12 overflow-hidden">
         <div 
           ref={containerRef}
           className="flex transition-transform duration-300 ease-in-out"
@@ -220,8 +218,12 @@ function ExploreDestinations() {
           {cities.map((city, index) => (
             <button 
               key={index}
-              className={`flex-shrink-0 bg-pink-100 px-2 py-1 text-xs sm:text-sm rounded-full hover:bg-pink-200 transition duration-300 transform hover:scale-105 hover:shadow-md text-pink-700 mr-2 ${selectedCity === city ? 'bg-pink-300' : ''}`}
-              style={{ width: `calc(${100 / citiesPerView}% - 0.5rem)` }}
+              className={`flex-shrink-0 px-4 py-2 text-sm sm:text-base rounded-full transition duration-300 shadow-md mr-3 ${
+                selectedCity === city 
+                  ? 'bg-pink-500 text-white' 
+                  : 'bg-white text-pink-500 hover:bg-pink-100'
+              }`}
+              style={{ width: `calc(${100 / citiesPerView}% - 0.75rem)` }}
               onClick={() => handleCityClick(city)}
             >
               {city}
@@ -231,7 +233,7 @@ function ExploreDestinations() {
         {startIndex > 0 && (
           <button
             onClick={() => shiftCities('prev')}
-            className="absolute left-0 top-1/2 transform -translate-y-1/2 bg-pink-500 hover:bg-pink-600 text-white p-2 rounded-full transition-all duration-300"
+            className="absolute left-0 top-1/2 transform -translate-y-1/2 bg-white hover:bg-gray-100 text-pink-500 p-2 rounded-full transition-all duration-300 shadow-md"
           >
             <FaChevronLeft size={20} />
           </button>
@@ -239,14 +241,14 @@ function ExploreDestinations() {
         {startIndex < cities.length - citiesPerView && (
           <button
             onClick={() => shiftCities('next')}
-            className="absolute right-0 top-1/2 transform -translate-y-1/2 bg-pink-500 hover:bg-pink-600 text-white p-2 rounded-full transition-all duration-300"
+            className="absolute right-0 top-1/2 transform -translate-y-1/2 bg-white hover:bg-gray-100 text-pink-500 p-2 rounded-full transition-all duration-300 shadow-md"
           >
             <FaChevronRight size={20} />
           </button>
         )}
       </div>
       {selectedCity && (
-        <div className="text-center mb-6">
+        <div className="text-center mb-8">
           <button 
             className="text-pink-500 hover:text-pink-600 font-medium text-sm transition duration-300"
             onClick={showAllExperiences}

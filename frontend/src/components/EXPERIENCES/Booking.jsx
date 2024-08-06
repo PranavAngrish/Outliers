@@ -1,16 +1,48 @@
 // Booking.jsx
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { ChevronDownIcon, ChevronUpIcon } from '@heroicons/react/solid';
 
 function Booking({ price, taxes, fees }) {
   const [guests, setGuests] = useState({ adults: 1, children: 0, infants: 0 });
   const [isGuestMenuOpen, setIsGuestMenuOpen] = useState(false);
+  const [selectedDate, setSelectedDate] = useState(null);
+  const [selectedTimeSlot, setSelectedTimeSlot] = useState(null);
+  const [availableDates, setAvailableDates] = useState([]);
+  const [availableTimeSlots, setAvailableTimeSlots] = useState([]);
 
   const safePrice = Number(price) || 0;
   const safeTaxes = Number(taxes) || 0;
   const safeFees = Number(fees) || 0;
   const total = (safePrice * (guests.adults + guests.children)) + safeTaxes + safeFees;
+
+  useEffect(() => {
+    // Fetch available dates from backend
+    fetchAvailableDates();
+  }, []);
+
+  useEffect(() => {
+    // Fetch available time slots when a date is selected
+    if (selectedDate) {
+      fetchAvailableTimeSlots(selectedDate);
+    }
+  }, [selectedDate]);
+
+  const fetchAvailableDates = async () => {
+    // TODO: Replace with actual API call
+    const mockDates = [
+      '2024-08-06', '2024-08-07', '2024-08-08', '2024-08-09', '2024-08-10'
+    ];
+    setAvailableDates(mockDates);
+  };
+
+  const fetchAvailableTimeSlots = async (date) => {
+    // TODO: Replace with actual API call
+    const mockTimeSlots = [
+      '09:00 AM', '11:00 AM', '02:00 PM', '04:00 PM'
+    ];
+    setAvailableTimeSlots(mockTimeSlots);
+  };
 
   const handleGuestChange = (type, change) => {
     setGuests(prevGuests => ({
@@ -30,6 +62,39 @@ function Booking({ price, taxes, fees }) {
     >
       <h2 className="text-2xl font-semibold mb-4">Book This Experience</h2>
       
+      {/* Date Selection */}
+      <div className="mb-4">
+        <label className="block text-sm font-medium text-gray-700 mb-1">Select Date</label>
+        <select
+          className="w-full border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-pink-500"
+          value={selectedDate || ''}
+          onChange={(e) => setSelectedDate(e.target.value)}
+        >
+          <option value="">Choose a date</option>
+          {availableDates.map(date => (
+            <option key={date} value={date}>{date}</option>
+          ))}
+        </select>
+      </div>
+
+      {/* Time Slot Selection */}
+      {selectedDate && (
+        <div className="mb-4">
+          <label className="block text-sm font-medium text-gray-700 mb-1">Select Time Slot</label>
+          <select
+            className="w-full border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-pink-500"
+            value={selectedTimeSlot || ''}
+            onChange={(e) => setSelectedTimeSlot(e.target.value)}
+          >
+            <option value="">Choose a time slot</option>
+            {availableTimeSlots.map(slot => (
+              <option key={slot} value={slot}>{slot}</option>
+            ))}
+          </select>
+        </div>
+      )}
+      
+      {/* Guest Selection */}
       <div className="mb-4 relative">
         <button
           className="w-full flex justify-between items-center bg-white border border-gray-300 rounded-lg px-4 py-2 text-left focus:outline-none focus:ring-2 focus:ring-pink-500"
@@ -79,6 +144,7 @@ function Booking({ price, taxes, fees }) {
         </AnimatePresence>
       </div>
       
+      {/* Price Breakdown */}
       <div className="space-y-2 mb-4">
         <div className="flex justify-between">
           <span>Base Price:</span>
@@ -97,9 +163,12 @@ function Booking({ price, taxes, fees }) {
           <span>${total.toFixed(2)}</span>
         </div>
       </div>
+
+      {/* Book Now Button */}
       <button
-        className="w-full bg-pink-500 text-white py-3 rounded-lg font-semibold hover:bg-pink-600 transition duration-300"
+        className="w-full bg-pink-500 text-white py-3 rounded-lg font-semibold hover:bg-pink-600 transition duration-300 disabled:bg-gray-400 disabled:cursor-not-allowed"
         onClick={() => alert('Booking functionality to be implemented')}
+        disabled={!selectedDate || !selectedTimeSlot}
       >
         Book Now
       </button>

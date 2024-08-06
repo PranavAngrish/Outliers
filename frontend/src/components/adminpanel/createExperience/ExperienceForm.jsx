@@ -1,6 +1,4 @@
 import React from 'react';
-import DatePicker from 'react-datepicker';
-import "react-datepicker/dist/react-datepicker.css";
 import ImageUpload from './ImageUpload';
 import ArrayInput from './ArrayInput';
 import FAQInput from './FAQInput';
@@ -69,60 +67,6 @@ const ExperienceForm = ({ experience, setExperience, isVariant }) => {
             placeholder="City"
             value={experience.location.city}
             onChange={(e) => handleLocationChange('city', e.target.value)}
-            required
-          />
-        </div>
-      </div>
-
-      <div className="mb-4 grid grid-cols-2 gap-4">
-        <div>
-          <label className={labelClass}>Start Date</label>
-          <DatePicker
-            selected={experience.startDate}
-            onChange={(date) => handleChange('startDate', date)}
-            className={inputClass}
-            dateFormat="MMMM d, yyyy"
-            required
-          />
-        </div>
-        <div>
-          <label className={labelClass}>End Date</label>
-          <DatePicker
-            selected={experience.endDate}
-            onChange={(date) => handleChange('endDate', date)}
-            className={inputClass}
-            dateFormat="MMMM d, yyyy"
-            required
-          />
-        </div>
-      </div>
-
-      <div className="mb-4 grid grid-cols-2 gap-4">
-        <div>
-          <label className={labelClass}>Start Time</label>
-          <DatePicker
-            selected={experience.startTime}
-            onChange={(time) => handleChange('startTime', time)}
-            showTimeSelect
-            showTimeSelectOnly
-            timeIntervals={15}
-            timeCaption="Time"
-            dateFormat="h:mm aa"
-            className={inputClass}
-            required
-          />
-        </div>
-        <div>
-          <label className={labelClass}>End Time</label>
-          <DatePicker
-            selected={experience.endTime}
-            onChange={(time) => handleChange('endTime', time)}
-            showTimeSelect
-            showTimeSelectOnly
-            timeIntervals={15}
-            timeCaption="Time"
-            dateFormat="h:mm aa"
-            className={inputClass}
             required
           />
         </div>

@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
-import { FaEye, FaLink, FaEdit, FaTrash, FaCheck, FaTimes, FaPlus } from 'react-icons/fa';
-import CreateExperience from './createExperience/CreateExperience.jsx';
+import { FaEye, FaLink, FaEdit, FaTrash, FaCheck, FaTimes, FaPlus, FaPauseCircle } from 'react-icons/fa';
+import CreateExperience from './createExperience/CreateExperience';
 
 const ExperienceManagement = ({ setActiveMenu, setSelectedVendor }) => {
   const [experiences, setExperiences] = useState([
@@ -120,7 +120,7 @@ const ExperienceManagement = ({ setActiveMenu, setSelectedVendor }) => {
                     <FaEdit className="inline mr-1 text-lg" /> Edit
                   </button>
                   <button onClick={() => handleAction('delete', exp.id)} className="text-red-600 hover:text-red-900">
-                    <FaTrash className="inline mr-1 text-lg" /> Delete
+                    <FaPauseCircle className="inline mr-1 text-lg" /> Hold
                   </button>
                 </>
               )}

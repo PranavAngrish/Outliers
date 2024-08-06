@@ -13,7 +13,7 @@ const ArrayInput = ({ label, items, setItems }) => {
   };
 
   const removeItem = (index) => {
-    if (index === 0) return; // Prevent removing the first item
+    if (index === 0) return;
     const updatedItems = items.filter((_, i) => i !== index);
     setItems(updatedItems);
   };

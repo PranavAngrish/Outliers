@@ -13,7 +13,7 @@ const FAQInput = ({ faqs, setFaqs }) => {
   };
 
   const removeFAQ = (index) => {
-    if (index === 0) return; // Prevent removing the first FAQ
+    if (index === 0) return;
     const updatedFAQs = faqs.filter((_, i) => i !== index);
     setFaqs(updatedFAQs);
   };

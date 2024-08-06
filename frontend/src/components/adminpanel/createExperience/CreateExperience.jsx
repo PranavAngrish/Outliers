@@ -9,6 +9,10 @@ const CreateExperience = ({ setPendingExperiences, setIsCreatingExperience }) =>
     description: '',
     images: [],
     location: { state: '', city: '' },
+    startDate: '',
+    endDate: '',
+    timeSlots: [''],
+    maxOccupancyPerSlot: '',
     duration: '',
     overview: '',
     itinerary: [''],
@@ -58,6 +62,13 @@ const CreateExperience = ({ setPendingExperiences, setIsCreatingExperience }) =>
     setEditingVariantIndex(index);
   };
 
+  const deleteVariant = (index) => {
+    setExperience(prev => ({
+      ...prev,
+      variants: prev.variants.filter((_, i) => i !== index)
+    }));
+  };
+
   return (
     <div className="bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4">
       {!isCreatingVariant ? (
@@ -89,6 +100,7 @@ const CreateExperience = ({ setPendingExperiences, setIsCreatingExperience }) =>
                   variant={variant} 
                   index={index} 
                   onEdit={() => editVariant(index)}
+                  onDelete={() => deleteVariant(index)}
                 />
               ))}
               <button

@@ -1,6 +1,8 @@
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
 import { Vendor } from '../../models/vendor.model.js'// Adjust the path as needed
+import { PendingExperience } from '../../models/pendingExperience.model.js';
+import { AcceptedExperience } from '../../models/acceptedExperience.model.js';
 
 const saltRounds = 10;
 const jwtSecret = 'your_jwt_secret'; // Use environment variable in production
@@ -104,11 +106,23 @@ export const logOut = async (req, res) => {
 export const deleteAccount = async (req, res) => {
     try {
         const { vendorId } = req.body;
-    
-        // Find and delete the vendor by ID
+
+        // Find the vendor by ID
+        const vendor = await Vendor.findById(vendorId);
+        if (!vendor) {
+            return res.status(404).json({ message: 'Vendor not found' });
+        }
+
+        // Delete all pending experiences of the vendor
+        await PendingExperience.deleteMany({ vendor: vendorId });
+
+        // Delete all accepted experiences of the vendor
+        await AcceptedExperience.deleteMany({ vendor: vendorId });
+
+        // Delete the vendor account
         await Vendor.findByIdAndDelete(vendorId);
 
-        res.status(200).json({ message: 'Vendor account deleted successfully' });
+        res.status(200).json({ message: 'Vendor account and related experiences deleted successfully' });
     } catch (error) {
         res.status(500).json({ error: error.message });
     }

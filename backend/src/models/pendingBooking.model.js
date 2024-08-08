@@ -19,10 +19,6 @@ const pendingBookingSchema = new Schema({
     addOns:[{
         type:String
     }],
-    acceptanceStatus:{
-        type: String,
-        enum: ["pending","accepted","rejected"],
-    },
     vendor:{
         type: Schema.Types.ObjectId,
         ref: "Vendor"
@@ -35,6 +31,14 @@ const pendingBookingSchema = new Schema({
         type: Schema.Types.ObjectId,
         ref: "Trip",
         index: true
+    },
+    dateTime:{
+        type: Date,
+        required: true
+    },
+    experience:{
+        type: Schema.Types.ObjectId,
+        ref: "AcceptedExperience"
     }
 
 },{

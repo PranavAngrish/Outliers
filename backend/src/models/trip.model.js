@@ -32,7 +32,6 @@ const tripSchema = new Schema({
         type: Number,
         required: true
     }
-
 })
 
 

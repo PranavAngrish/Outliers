@@ -35,6 +35,11 @@ const acceptedBookingSchema = new Schema({
     cancellationStatus:{
         type:String,
         enum:["false","pending","accepted","rejected"],
+        default:"false"
+    },
+    dateTime:{
+        type: Date,
+        required: true
     }
 
 },{

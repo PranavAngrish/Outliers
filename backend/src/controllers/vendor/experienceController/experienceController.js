@@ -1,7 +1,7 @@
-import { Vendor } from '../../models/vendor.model.js';
-import { PendingExperience } from '../../models/pendingExperience.model.js';
-import { AcceptedExperience } from '../../models/acceptedExperience.model.js';
-import { UpdatedExperience } from '../../models/updatedExperience.model.js';
+import { Vendor } from '../../../models/vendor.model.js';
+import { PendingExperience } from '../../../models/pendingExperience.model.js';
+import { AcceptedExperience } from '../../../models/acceptedExperience.model.js';
+import { UpdatedExperience } from '../../../models/updatedExperience.model.js';
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
 

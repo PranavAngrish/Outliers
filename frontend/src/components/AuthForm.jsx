@@ -20,10 +20,10 @@ const AuthForm = () => {
         <div className={`flip-container ${isFlipped ? "flipped" : ""}`}>
           <div className="flipper">
             <div className="front">
-              <SignUp onSignInClick={handleFlip} />
+              <SignIn onSignUpClick={handleFlip} />
             </div>
             <div className="back">
-              <SignIn onSignUpClick={handleFlip} />
+              <SignUp onSignInClick={handleFlip} />  
             </div>
           </div>
         </div>

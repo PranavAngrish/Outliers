@@ -3,6 +3,7 @@ import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
 import FirstPage from "./components/firstPage.jsx";
 import ExploreDestinations from "./components/ExploreDestinations.jsx";
 import Gallery from "./components/Gallery.jsx";
+import Host from "./components/HostExperience.jsx";
 import Footer from "./components/Footer.jsx";
 import AuthForm from './components/AuthForm.jsx';
 import Vendor from './components/vendorpanel/VendorPanel.jsx'
@@ -73,6 +74,7 @@ function App() {
         <Route path="/auth" element={<AuthForm />} />
         <Route path="/vendor" element={<Vendor />} />
         <Route path="/admin" element={<Admin />} />
+        <Route path="/host" element={<Host />} />
         <Route 
           path="/experience/:experienceName" 
           element={<ExperienceDetails experiences={experiences} />} 

@@ -59,7 +59,7 @@ const Navbar = () => {
           ))}
         </div>
         <div className="hidden md:flex space-x-2 lg:space-x-4">
-          <Link to="/admin">
+          <Link to="/host">
           <NavButton className="bg-white text-black hover:bg-gray-200">
             Host An Experience!
           </NavButton>
@@ -89,8 +89,8 @@ const Navbar = () => {
               {item}
             </a>
           ))}
-          <Link to="/admin" className="block w-full">
-          <NavButton className="w-full bg-black text-white hover:bg-gray-800 mt-2">
+          <Link to="/host" className="block w-full">
+          <NavButton className="w-full bg- text-white hover:bg-gray-800 mt-2">
             Host An Experience!
           </NavButton>
           </Link>

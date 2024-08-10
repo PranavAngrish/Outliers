@@ -1,7 +1,7 @@
 import React from 'react';
 
 const Sidebar = ({ setActiveMenu, activeMenu }) => {
-  const menuItems = ['Dashboard', 'Experiences', 'Refunds'];
+  const menuItems = ['Dashboard', 'Experiences', 'Users', 'Refunds'];
 
   return (
     <div className="w-64 bg-black text-white h-screen">

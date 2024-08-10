@@ -1,6 +1,6 @@
-// UserManagement.js
+// UserManagement.jsx
 import React, { useState } from 'react';
-import { FaSearch, FaTimesCircle } from 'react-icons/fa';
+import { FaSearch } from 'react-icons/fa';
 import { Link } from 'react-router-dom';
 
 const UserManagement = () => {
@@ -43,14 +43,6 @@ const UserManagement = () => {
     setSortConfig({ key, direction });
   };
 
-  const handleCancelBooking = (id) => {
-    if (window.confirm('Are you sure you want to cancel this user\'s booking?')) {
-      setUsers(users.map(user =>
-        user.id === id ? { ...user, experienceBooked: { name: 'None', id: null } } : user
-      ));
-    }
-  };
-
   return (
     <div className="space-y-6">
       <h2 className="text-3xl font-bold text-gray-800">User Management</h2>
@@ -68,7 +60,7 @@ const UserManagement = () => {
         <table className="w-full">
           <thead className="bg-gray-50">
             <tr>
-              {['Name', 'Email', 'Mobile', 'Experience Booked', 'Action'].map((header) => (
+              {['Name', 'Email', 'Mobile', 'Experience Booked'].map((header) => (
                 <th 
                   key={header}
                   className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer"
@@ -98,13 +90,6 @@ const UserManagement = () => {
                     </Link>
                   ) : (
                     'None'
-                  )}
-                </td>
-                <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                  {user.experienceBooked.id && (
-                    <button onClick={() => handleCancelBooking(user.id)} className="text-red-600 hover:text-red-900">
-                      <FaTimesCircle className="inline mr-1" /> Cancel Booking
-                    </button>
                   )}
                 </td>
               </tr>

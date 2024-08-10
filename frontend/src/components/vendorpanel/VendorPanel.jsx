@@ -4,6 +4,7 @@ import Header from './Header';
 import Dashboard from './Dashboard';
 import ExperienceManagement from './ExperienceManagement';
 import RefundManagement from './RefundManagement';
+import UserManagement from './UserManagement';
 
 const VendorPanel = () => {
   const [activeMenu, setActiveMenu] = useState('Dashboard');
@@ -17,6 +18,8 @@ const VendorPanel = () => {
         return <ExperienceManagement setActiveMenu={setActiveMenu} setSelectedVendor={setSelectedVendor} />;
       case 'Refunds':
         return <RefundManagement />;
+      case 'Users':
+        return <UserManagement />;
       default:
         return <Dashboard />;
     }

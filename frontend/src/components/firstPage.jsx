@@ -90,7 +90,7 @@ const Navbar = () => {
             </a>
           ))}
           <Link to="/host" className="block w-full">
-          <NavButton className="w-full bg- text-white hover:bg-gray-800 mt-2">
+          <NavButton className="w-full bg-black text-white hover:bg-gray-800 mt-2">
             Host An Experience!
           </NavButton>
           </Link>

@@ -19,7 +19,7 @@ import MAP6 from "/src/assets/outliers/MAPrajasthan.png";
 const NavItem = ({ href, children }) => (
   <a
     href={href}
-    className="text-sm lg:text-base text-white hover:text-[#EC4899] transition-colors duration-300 hover:underline"
+    className="text-sm lg:text-base text-white hover:text-pink-300 transition-colors duration-300 hover:underline"
   >
     {children}
   </a>
@@ -36,7 +36,7 @@ const NavButton = ({ className, children }) => (
 const Navbar = () => {
   const [showMobileMenu, setShowMobileMenu] = useState(false);
 
-  const navItems = ["Experiences", "Destinations", "About Us", "Contact Us"];
+  const navItems = ["Experiences", "Destinations", "Gallery", "Contact Us"];
 
   return (
     <>

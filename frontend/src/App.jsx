@@ -1,7 +1,6 @@
 import React from "react";
 import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
 import FirstPage from "./components/firstPage.jsx";
-import ExploreDestinations from "./components/ExploreDestinations.jsx";
 import Gallery from "./components/Gallery.jsx";
 import Host from "./components/HostExperience.jsx";
 import Footer from "./components/Footer.jsx";
@@ -10,10 +9,12 @@ import Vendor from './components/vendorpanel/VendorPanel.jsx'
 import Admin from './components/adminpanel/AdminPanel.jsx'
 import ExperienceDetails from './components/EXPERIENCES/ExperienceDetails.jsx';
 import udaipur from "/src/assets/outliers/udaipur.jpg";
+import ExploreExperiences from "./components/ExploreExperiences.jsx";
+import ExploreDestinations from './components/ExploreDestinations.jsx';
 // Add this array of experiences
 const experiences = [
   { 
-    name: "Jaipur",
+    name: "Jaipur Bike Tour",
     gallery: [
       "/src/assets/outliers/jaipur1.jpg",
       "/src/assets/outliers/jaipur2.jpg",
@@ -88,7 +89,8 @@ function Home() {
   return (
     <div className="min-h-screen w-full">
       <FirstPage />
-      <ExploreDestinations experiences={experiences} />
+      <ExploreExperiences experiences={experiences} />
+      <ExploreDestinations />
       <Gallery />
       <Footer />
     </div>

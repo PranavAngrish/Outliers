@@ -206,7 +206,7 @@ function ExploreExperiences() {
 
   return (
     <div ref={sectionRef} className="py-12 md:py-20 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto">
-      <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold mb-8 md:mb-12 text-gray-800">Explore Experiences</h2>
+      <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold mb-8 md:mb-12 text-gray-800 text-center">Explore Experiences</h2>
       <div className="relative mb-8 md:mb-12 overflow-hidden">
         <div 
           ref={containerRef}

@@ -62,6 +62,7 @@ const SignUp = ({ onSignInClick }) => {
     dob: null,
     email: '',
     contactnumber: '',
+    occupation: '',
     state: '',
     city: '',
     password: ''
@@ -94,6 +95,7 @@ const SignUp = ({ onSignInClick }) => {
     else if (!/\S+@\S+\.\S+/.test(formData.email)) newErrors.email = "Email is invalid";
     if (!formData.contactnumber) newErrors.contactnumber = "Contact number is required";
     else if (formData.contactnumber.length !== 10) newErrors.contactnumber = "Contact number must be 10 digits";
+    if (!formData.occupation) newErrors.occupation = "Occupation is required";
     if (!formData.state) newErrors.state = "State is required";
     if (!formData.city) newErrors.city = "City is required";
     if (!formData.password) newErrors.password = "Password is required";
@@ -127,25 +129,25 @@ const SignUp = ({ onSignInClick }) => {
         <div className="mb-2">
           <label className="block text-gray-700 text-sm font-bold mb-1" htmlFor="dob">Date of Birth</label>
           <DatePicker
-              selected={formData.dob}
-              onChange={handleDateChange}
-              maxDate={new Date()}
-              showYearDropdown
-              scrollableYearDropdown
-              yearDropdownItemNumber={100}
-              dropdownMode="select"
-              className={`shadow appearance-none border rounded w-full py-1 px-2 text-gray-700 leading-tight focus:outline-none focus:shadow-outline ${errors.dob ? 'border-red-500' : ''}`}
-              placeholderText="MM/DD/YYYY"
-              dateFormat="MM/dd/yyyy"
-              popperPlacement="bottom-start"
-              popperModifiers={{
-                preventOverflow: {
-                  enabled: true,
-                  escapeWithReference: false,
-                  boundariesElement: "viewport"
-                }
-              }}
-            />
+            selected={formData.dob}
+            onChange={handleDateChange}
+            maxDate={new Date()}
+            showYearDropdown
+            scrollableYearDropdown
+            yearDropdownItemNumber={100}
+            dropdownMode="select"
+            className={`shadow appearance-none border rounded w-full py-1 px-2 text-gray-700 leading-tight focus:outline-none focus:shadow-outline ${errors.dob ? 'border-red-500' : ''}`}
+            placeholderText="MM/DD/YYYY"
+            dateFormat="MM/dd/yyyy"
+            popperPlacement="bottom-start"
+            popperModifiers={{
+              preventOverflow: {
+                enabled: true,
+                escapeWithReference: false,
+                boundariesElement: "viewport"
+              }
+            }}
+          />
           {errors.dob && <p className="text-red-500 text-xs italic">{errors.dob}</p>}
         </div>
         <InputField 
@@ -166,6 +168,16 @@ const SignUp = ({ onSignInClick }) => {
           pattern="\d*"
           maxLength={10}
         />
+        <div className="col-span-2">
+          <InputField 
+            label="Occupation" 
+            type="text" 
+            placeholder="Your occupation" 
+            value={formData.occupation} 
+            onChange={handleChange} 
+            error={errors.occupation}
+          />
+        </div>
         <InputField 
           label="State" 
           type="text" 

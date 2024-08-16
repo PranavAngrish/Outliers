@@ -97,13 +97,10 @@ const ChooseLocation = () => {
     }
   };
 
-  const NavigationButton = ({ direction, onClick, disabled }) => (
+  const NavigationButton = ({ direction, onClick }) => (
     <button
       onClick={onClick}
-      disabled={disabled}
-      className={`absolute ${direction === 'left' ? 'left-2' : 'right-2'} top-1/2 transform -translate-y-1/2 bg-white bg-opacity-75 hover:bg-opacity-100 text-pink-500 p-2 rounded-full transition-all duration-300 shadow-md ${
-        disabled ? 'opacity-50 cursor-not-allowed' : ''
-      } ${isMobile ? 'block' : isHovered ? 'block' : 'hidden'}`}
+      className={`absolute ${direction === 'left' ? 'left-2' : 'right-2'} top-1/2 transform -translate-y-1/2 bg-white bg-opacity-75 hover:bg-opacity-100 text-pink-500 p-2 rounded-full transition-all duration-300 shadow-md`}
     >
       {direction === 'left' ? <FaChevronLeft size={20} /> : <FaChevronRight size={20} />}
     </button>
@@ -126,16 +123,18 @@ const ChooseLocation = () => {
               <LocationCard key={index} location={location} isActive={index === currentIndex} isMobile={isMobile} />
             ))}
           </motion.div>
-          <NavigationButton 
-            direction="left" 
-            onClick={prevLocation} 
-            disabled={currentIndex === 0}
-          />
-          <NavigationButton 
-            direction="right" 
-            onClick={nextLocation} 
-            disabled={currentIndex === locations.length - 1}
-          />
+          {currentIndex > 0 && (
+            <NavigationButton 
+              direction="left" 
+              onClick={prevLocation}
+            />
+          )}
+          {currentIndex < locations.length - 1 && (
+            <NavigationButton 
+              direction="right" 
+              onClick={nextLocation}
+            />
+          )}
         </div>
       </div>
     </div>

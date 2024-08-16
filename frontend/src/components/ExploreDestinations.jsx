@@ -47,11 +47,11 @@ const ChooseLocation = () => {
   const containerRef = useRef(null);
 
   const nextLocation = useCallback(() => {
-    setCurrentIndex((prevIndex) => (prevIndex + 1) % locations.length);
+    setCurrentIndex((prevIndex) => Math.min(prevIndex + 1, locations.length - 1));
   }, []);
 
   const prevLocation = useCallback(() => {
-    setCurrentIndex((prevIndex) => (prevIndex - 1 + locations.length) % locations.length);
+    setCurrentIndex((prevIndex) => Math.max(prevIndex - 1, 0));
   }, []);
 
   useEffect(() => {
@@ -88,19 +88,22 @@ const ChooseLocation = () => {
     const touchEndX = e.touches[0].clientX;
     const diff = containerRef.current.touchStartX - touchEndX;
     if (Math.abs(diff) > 50) {
-      if (diff > 0) {
+      if (diff > 0 && currentIndex < locations.length - 1) {
         nextLocation();
-      } else {
+      } else if (diff < 0 && currentIndex > 0) {
         prevLocation();
       }
       containerRef.current.touchStartX = null;
     }
   };
 
-  const NavigationButton = ({ direction, onClick }) => (
+  const NavigationButton = ({ direction, onClick, disabled }) => (
     <button
       onClick={onClick}
-      className={`absolute ${direction === 'left' ? 'left-2' : 'right-2'} top-1/2 transform -translate-y-1/2 bg-white bg-opacity-75 hover:bg-opacity-100 text-pink-500 p-2 rounded-full transition-all duration-300 shadow-md ${isMobile ? 'block' : isHovered ? 'block' : 'hidden'}`}
+      disabled={disabled}
+      className={`absolute ${direction === 'left' ? 'left-2' : 'right-2'} top-1/2 transform -translate-y-1/2 bg-white bg-opacity-75 hover:bg-opacity-100 text-pink-500 p-2 rounded-full transition-all duration-300 shadow-md ${
+        disabled ? 'opacity-50 cursor-not-allowed' : ''
+      } ${isMobile ? 'block' : isHovered ? 'block' : 'hidden'}`}
     >
       {direction === 'left' ? <FaChevronLeft size={20} /> : <FaChevronRight size={20} />}
     </button>
@@ -123,8 +126,16 @@ const ChooseLocation = () => {
               <LocationCard key={index} location={location} isActive={index === currentIndex} isMobile={isMobile} />
             ))}
           </motion.div>
-          {currentIndex > 0 && <NavigationButton direction="left" onClick={prevLocation} />}
-          {currentIndex < locations.length - 1 && <NavigationButton direction="right" onClick={nextLocation} />}
+          <NavigationButton 
+            direction="left" 
+            onClick={prevLocation} 
+            disabled={currentIndex === 0}
+          />
+          <NavigationButton 
+            direction="right" 
+            onClick={nextLocation} 
+            disabled={currentIndex === locations.length - 1}
+          />
         </div>
       </div>
     </div>

@@ -1,6 +1,7 @@
-import React, { useState, useEffect, useRef } from 'react';
-import { motion, useAnimation, useDragControls } from 'framer-motion';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
+import { motion, useAnimation } from 'framer-motion';
 import { useMediaQuery } from 'react-responsive';
+import { FaChevronLeft, FaChevronRight } from 'react-icons/fa';
 
 const locations = [
   { name: 'NEW YORK, NYC', image: '/path/to/nyc-image.jpg', description: 'WELCOME HOME' },
@@ -41,25 +42,24 @@ const ChooseLocation = () => {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isHovered, setIsHovered] = useState(false);
   const controls = useAnimation();
-  const dragControls = useDragControls();
   const isMobile = useMediaQuery({ maxWidth: 768 });
   const intervalRef = useRef(null);
   const containerRef = useRef(null);
 
-  const nextLocation = () => {
+  const nextLocation = useCallback(() => {
     setCurrentIndex((prevIndex) => (prevIndex + 1) % locations.length);
-  };
+  }, []);
 
-  const prevLocation = () => {
+  const prevLocation = useCallback(() => {
     setCurrentIndex((prevIndex) => (prevIndex - 1 + locations.length) % locations.length);
-  };
+  }, []);
 
   useEffect(() => {
     if (!isMobile && !isHovered) {
       intervalRef.current = setInterval(nextLocation, 3000);
     }
     return () => clearInterval(intervalRef.current);
-  }, [isMobile, isHovered]);
+  }, [isMobile, isHovered, nextLocation]);
 
   useEffect(() => {
     controls.start({ x: `${-currentIndex * (isMobile ? 100 : 33.33)}%` });
@@ -79,26 +79,30 @@ const ChooseLocation = () => {
     }
   };
 
-  const handleDragEnd = (event, info) => {
-    if (isMobile) {
-      const swipeThreshold = 50;
-      if (info.offset.x < -swipeThreshold) {
+  const handleTouchStart = (e) => {
+    containerRef.current.touchStartX = e.touches[0].clientX;
+  };
+
+  const handleTouchMove = (e) => {
+    if (!containerRef.current.touchStartX) return;
+    const touchEndX = e.touches[0].clientX;
+    const diff = containerRef.current.touchStartX - touchEndX;
+    if (Math.abs(diff) > 50) {
+      if (diff > 0) {
         nextLocation();
-      } else if (info.offset.x > swipeThreshold) {
+      } else {
         prevLocation();
       }
-      controls.start({ x: `${-currentIndex * 100}%` });
+      containerRef.current.touchStartX = null;
     }
   };
 
   const NavigationButton = ({ direction, onClick }) => (
     <button
-      className={`absolute ${direction === 'left' ? 'left-2 md:left-4' : 'right-2 md:right-4'} top-1/2 transform -translate-y-1/2 bg-white rounded-full p-2 md:p-4 shadow-lg ${isMobile ? 'block' : isHovered ? 'block' : 'hidden'}`}
       onClick={onClick}
+      className={`absolute ${direction === 'left' ? 'left-2' : 'right-2'} top-1/2 transform -translate-y-1/2 bg-white bg-opacity-75 hover:bg-opacity-100 text-pink-500 p-2 rounded-full transition-all duration-300 shadow-md ${isMobile ? 'block' : isHovered ? 'block' : 'hidden'}`}
     >
-      <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" className="w-4 h-4 md:w-6 md:h-6 text-pink-500">
-        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d={direction === 'left' ? "M15 19l-7-7 7-7" : "M9 5l7 7-7 7"} />
-      </svg>
+      {direction === 'left' ? <FaChevronLeft size={20} /> : <FaChevronRight size={20} />}
     </button>
   );
 
@@ -112,18 +116,15 @@ const ChooseLocation = () => {
             className="flex"
             animate={controls}
             transition={{ type: 'spring', stiffness: 300, damping: 30 }}
-            drag={isMobile ? "x" : false}
-            dragControls={dragControls}
-            dragConstraints={{ left: -((locations.length - 1) * 100), right: 0 }}
-            dragElastic={0.1}
-            onDragEnd={handleDragEnd}
+            onTouchStart={handleTouchStart}
+            onTouchMove={handleTouchMove}
           >
             {locations.map((location, index) => (
               <LocationCard key={index} location={location} isActive={index === currentIndex} isMobile={isMobile} />
             ))}
           </motion.div>
-          <NavigationButton direction="left" onClick={prevLocation} />
-          <NavigationButton direction="right" onClick={nextLocation} />
+          {currentIndex > 0 && <NavigationButton direction="left" onClick={prevLocation} />}
+          {currentIndex < locations.length - 1 && <NavigationButton direction="right" onClick={nextLocation} />}
         </div>
       </div>
     </div>

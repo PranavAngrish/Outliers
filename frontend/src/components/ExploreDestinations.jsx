@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { motion, useAnimation } from 'framer-motion';
+import { motion, useAnimation, useDragControls } from 'framer-motion';
 import { useMediaQuery } from 'react-responsive';
 
 const locations = [
@@ -41,6 +41,7 @@ const ChooseLocation = () => {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isHovered, setIsHovered] = useState(false);
   const controls = useAnimation();
+  const dragControls = useDragControls();
   const isMobile = useMediaQuery({ maxWidth: 768 });
   const intervalRef = useRef(null);
   const containerRef = useRef(null);
@@ -86,6 +87,7 @@ const ChooseLocation = () => {
       } else if (info.offset.x > swipeThreshold) {
         prevLocation();
       }
+      controls.start({ x: `${-currentIndex * 100}%` });
     }
   };
 
@@ -109,10 +111,11 @@ const ChooseLocation = () => {
           <motion.div
             className="flex"
             animate={controls}
-            transition={{ type: 'tween', duration: 0.5 }}
+            transition={{ type: 'spring', stiffness: 300, damping: 30 }}
             drag={isMobile ? "x" : false}
-            dragConstraints={{ left: -((locations.length - 1) * (isMobile ? 100 : 33.33)), right: 0 }}
-            dragElastic={0.2}
+            dragControls={dragControls}
+            dragConstraints={{ left: -((locations.length - 1) * 100), right: 0 }}
+            dragElastic={0.1}
             onDragEnd={handleDragEnd}
           >
             {locations.map((location, index) => (

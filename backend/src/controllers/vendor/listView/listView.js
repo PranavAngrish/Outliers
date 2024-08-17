@@ -1,5 +1,5 @@
-import { AcceptedExperience } from '../models/acceptedExperience.model.js';
-import { PendingExperience } from '../models/pendingExperience.model.js';
+import { AcceptedExperience } from '../../../models/acceptedExperience.model.js';
+import { PendingExperience } from '../../../models/pendingExperience.model.js';
 
 
 // Get Admin Accepted Experiences of the vendor

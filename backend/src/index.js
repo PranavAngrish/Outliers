@@ -4,6 +4,8 @@ import app from "./app.js";
 import userRoutes from "./routes/userRoutes.js";
 import vendorRoutes from "./routes/vendorRoutes.js";
 import experienceRoutes from "./routes/experienceRoutes.js";
+import adminRoutes from "./routes/adminRoutes.js";
+import demoRoutes from "./routes/demoRoutes.js";
 
 dotenv.config();
 
@@ -21,3 +23,5 @@ connectDB()
 app.use('/api/users', userRoutes);
 app.use('/api/vendors', vendorRoutes);
 app.use('/api/experiences', experienceRoutes);
+app.use('/api/admin', adminRoutes);
+app.use('/api/seed', demoRoutes );

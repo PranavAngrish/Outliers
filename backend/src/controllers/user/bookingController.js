@@ -1,8 +1,8 @@
-import { PendingBooking } from '../models/pendingBooking.model';
-import { AcceptedBooking } from '../models/acceptedBooking.model';
-import { AcceptedExperience } from '../models/acceptedExperience.model';
-import { Trip } from '../models/trip.model';
-import { createTrip } from '../controllers/vendor/trip/tripController';
+import { PendingBooking } from '../../models/pendingBooking.model.js';
+import { AcceptedBooking } from '../../models/acceptedBooking.model.js';
+import { AcceptedExperience } from '../../models/acceptedExperience.model.js';
+import { Trip } from '../../models/trip.model.js';
+import { createTrip } from '../vendor/trip/tripController.js';
 
 
 
@@ -105,10 +105,7 @@ export const acceptPendingBooking = async (req, res) => {
             addOns
         );
 
-        // Save the booking as accepted
-        const acceptedBooking = new AcceptedBooking(booking);
-        await acceptedBooking.save();
-
+        
         //trip is being saved in database in createTrip function
 
         // Remove the pending booking
@@ -119,4 +116,3 @@ export const acceptPendingBooking = async (req, res) => {
         res.status(500).json({ error: error.message });
     }
 };
-

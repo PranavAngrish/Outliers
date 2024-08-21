@@ -1,4 +1,4 @@
-import AcceptedExperience from '../../models/acceptedExperience.model.js';
+import {AcceptedExperience} from '../../models/acceptedExperience.model.js';
 
 
 

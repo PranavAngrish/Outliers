@@ -2,15 +2,14 @@ import express from 'express';
 import {
     createExperience,
     updateExperience,
-} from '../controllers/experienceController/experienceController.js'; // Adjust the path as needed
+} from '../controllers/vendor/experienceController/experienceController.js'; // Adjust the path as needed
 import { acceptExperience,acceptUpdatedExperience } from '../controllers/admin/adminAcceptance/adminAcceptanceController.js'; // Adjust the path as needed
-import { authenticate, isAdmin } from '../middlewares/authMiddlewares.js'; // Adjust the path as needed
+import { authenticateAndAuthorizeAdminOrVendor, authenticateAndAuthorizeAdmin, checkUserSignedIn } from '../middlewares/authMiddlewares.js';
 import { getPendingExperiences } from '../controllers/admin/listForAcceptance/listOfItemsForAcceptanceController.js'; // Adjust the path as needed
 import { createTrip } from '../controllers/vendor/trip/tripController.js';
-import { getExperiencesByCategory, getExperiencesByState, getRandomExperiences } from '../controllers/experienceController/experienceController.js';
-import { getExperienceDetails } from '../controllers/experienceController/experienceController.js';
-
-
+import { getExperiencesByCategory, getExperiencesByState, getRandomExperiences } from '../controllers/listOfViews/viewExperiences.js';
+import { getExperienceDetails } from '../controllers/user/bookingController.js';
+import { createPendingBooking } from '../controllers/user/bookingController.js';
 const router = express.Router();
 
 // Route to get experiences by category
@@ -25,15 +24,18 @@ router.get('/experiences/:experienceId', getExperienceDetails);
 
 
 
+//Route to create a pending booking
+router.post('/create-booking',checkUserSignedIn, createPendingBooking);
+
+
 // Protected routes
-router.post('/create-experience', authenticate, createExperience);
-router.post('/update-experience/:id', authenticate, updateExperience);
+router.post('/create-experience', authenticateAndAuthorizeAdminOrVendor, createExperience);
+router.post('/update-experience/:id', authenticateAndAuthorizeAdminOrVendor, updateExperience);
 
 // Admin routes
-router.get('/pending-experiences', authenticate, isAdmin, getPendingExperiences);
-router.post('/accept-experience/:id', authenticate, isAdmin, acceptExperience);
-router.post('/accept-updated-experience/:id', authenticate, isAdmin, acceptUpdatedExperience);
-router.post('/create-trip', authenticate, createTrip);
+router.get('/pending-experiences', authenticateAndAuthorizeAdminOrVendor, getPendingExperiences);
+router.post('/accept-experience/:id',authenticateAndAuthorizeAdmin , acceptExperience);
+router.post('/accept-updated-experience/:id', authenticateAndAuthorizeAdmin, acceptUpdatedExperience);
 
 
 

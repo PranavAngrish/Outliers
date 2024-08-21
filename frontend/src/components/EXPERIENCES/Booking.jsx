@@ -1,7 +1,8 @@
-// Booking.jsx
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { ChevronDownIcon, ChevronUpIcon } from '@heroicons/react/solid';
+import { DayPicker } from 'react-day-picker';
+import 'react-day-picker/dist/style.css';
 
 function Booking({ price, taxes, fees }) {
   const [guests, setGuests] = useState({ adults: 1, children: 0, infants: 0 });
@@ -10,6 +11,11 @@ function Booking({ price, taxes, fees }) {
   const [selectedTimeSlot, setSelectedTimeSlot] = useState(null);
   const [availableDates, setAvailableDates] = useState([]);
   const [availableTimeSlots, setAvailableTimeSlots] = useState([]);
+  const [isDatePickerOpen, setIsDatePickerOpen] = useState(false);
+  const [isTimeSlotMenuOpen, setIsTimeSlotMenuOpen] = useState(false);
+  const guestMenuRef = useRef(null);
+  const datePickerRef = useRef(null);
+  const timeSlotRef = useRef(null);
 
   const safePrice = Number(price) || 0;
   const safeTaxes = Number(taxes) || 0;
@@ -28,12 +34,33 @@ function Booking({ price, taxes, fees }) {
     }
   }, [selectedDate]);
 
+  useEffect(() => {
+    // Add event listener to close the dropdown menus when clicking outside
+    const handleClickOutside = (event) => {
+      if (guestMenuRef.current && !guestMenuRef.current.contains(event.target)) {
+        setIsGuestMenuOpen(false);
+      }
+      if (datePickerRef.current && !datePickerRef.current.contains(event.target)) {
+        setIsDatePickerOpen(false);
+      }
+      if (timeSlotRef.current && !timeSlotRef.current.contains(event.target)) {
+        setIsTimeSlotMenuOpen(false);
+      }
+    };
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, [guestMenuRef, datePickerRef, timeSlotRef]);
+
   const fetchAvailableDates = async () => {
     // TODO: Replace with actual API call
+    const today = new Date();
     const mockDates = [
-      '2024-08-06', '2024-08-07', '2024-08-08', '2024-08-09', '2024-08-10'
+      new Date('2024-08-26'), new Date('2024-08-27'), new Date('2024-08-28'),
+      new Date('2024-08-22'), new Date('2024-08-30')
     ];
-    setAvailableDates(mockDates);
+    setAvailableDates(mockDates.filter(date => date >= today));
   };
 
   const fetchAvailableTimeSlots = async (date) => {
@@ -53,6 +80,14 @@ function Booking({ price, taxes, fees }) {
 
   const totalGuests = guests.adults + guests.children + guests.infants;
 
+  const isDayAvailable = (date) => {
+    return availableDates.some(d => d.toDateString() === date.toDateString());
+  };
+
+  const isDayPast = (date) => {
+    return date < new Date();
+  };
+
   return (
     <motion.div
       className="sticky top-4 bg-white rounded-lg shadow-lg p-6 max-w-md w-full"
@@ -61,41 +96,109 @@ function Booking({ price, taxes, fees }) {
       transition={{ duration: 0.5 }}
     >
       <h2 className="text-2xl font-semibold mb-4">Book This Experience</h2>
-      
+
       {/* Date Selection */}
-      <div className="mb-4">
-        <label className="block text-sm font-medium text-gray-700 mb-1">Select Date</label>
-        <select
-          className="w-full border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-pink-500"
-          value={selectedDate || ''}
-          onChange={(e) => setSelectedDate(e.target.value)}
+      <div className="mb-4 relative" ref={datePickerRef}>
+        <button
+          className="w-full flex justify-between items-center bg-white border border-gray-300 rounded-lg px-4 py-2 text-left focus:outline-none focus:ring-2 focus:ring-pink-500"
+          onClick={() => setIsDatePickerOpen(!isDatePickerOpen)}
         >
-          <option value="">Choose a date</option>
-          {availableDates.map(date => (
-            <option key={date} value={date}>{date}</option>
-          ))}
-        </select>
+          <span>{selectedDate ? selectedDate.toLocaleDateString() : 'Select Date'}</span>
+          {isDatePickerOpen ? <ChevronUpIcon className="h-5 w-5" /> : <ChevronDownIcon className="h-5 w-5" />}
+        </button>
+
+        <AnimatePresence>
+          {isDatePickerOpen && (
+            <motion.div
+              className="absolute z-10 mt-2 bg-white rounded-lg shadow-lg p-4"
+              initial={{ opacity: 0, y: -10 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -10 }}
+              transition={{ duration: 0.2 }}
+            >
+              <DayPicker
+                selected={selectedDate}
+                onDayClick={(date) => {
+                  if (isDayAvailable(date)) {
+                    setSelectedDate(date);
+                    setIsDatePickerOpen(false);
+                    fetchAvailableTimeSlots(date);
+                  }
+                }}
+                modifiers={{
+                  available: isDayAvailable,
+                  past: isDayPast,
+                  unavailable: date => !isDayAvailable(date)
+                }}
+                modifiersStyles={{
+                  available: {
+                    color: '#000',
+                    backgroundColor: '#FFF',
+                    cursor: 'pointer',
+                    fontWeight: 'bold',
+                  },
+                  past: {
+                    color: '#C4C4C4',
+                    cursor: 'not-allowed',
+                  },
+                  unavailable: {
+                    color: '#C4C4C4',
+                    cursor: 'not-allowed',
+                  },
+                  selected: {
+                    backgroundColor: '#FFC0CB',
+                    color: 'white',
+                  }
+                }}
+                modifiersClassNames={{
+                  available: 'available',
+                }}
+              />
+            </motion.div>
+          )}
+        </AnimatePresence>
       </div>
 
       {/* Time Slot Selection */}
       {selectedDate && (
-        <div className="mb-4">
-          <label className="block text-sm font-medium text-gray-700 mb-1">Select Time Slot</label>
-          <select
-            className="w-full border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-pink-500"
-            value={selectedTimeSlot || ''}
-            onChange={(e) => setSelectedTimeSlot(e.target.value)}
+        <div className="mb-4 relative" ref={timeSlotRef}>
+          <button
+            className="w-full flex justify-between items-center bg-white border border-gray-300 rounded-lg px-4 py-2 text-left focus:outline-none focus:ring-2 focus:ring-pink-500"
+            onClick={() => setIsTimeSlotMenuOpen(!isTimeSlotMenuOpen)}
           >
-            <option value="">Choose a time slot</option>
-            {availableTimeSlots.map(slot => (
-              <option key={slot} value={slot}>{slot}</option>
-            ))}
-          </select>
+            <span>{selectedTimeSlot || 'Choose a time slot'}</span>
+            {isTimeSlotMenuOpen ? <ChevronUpIcon className="h-5 w-5" /> : <ChevronDownIcon className="h-5 w-5" />}
+          </button>
+
+          <AnimatePresence>
+            {isTimeSlotMenuOpen && (
+              <motion.div
+                className="absolute z-10 mt-2 w-full bg-white rounded-lg shadow-lg p-4"
+                initial={{ opacity: 0, y: -10 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -10 }}
+                transition={{ duration: 0.2 }}
+              >
+                {availableTimeSlots.map(slot => (
+                  <div
+                    key={slot}
+                    className="py-2 hover:bg-gray-100 rounded-lg cursor-pointer"
+                    onClick={() => {
+                      setSelectedTimeSlot(slot);
+                      setIsTimeSlotMenuOpen(false);
+                    }}
+                  >
+                    {slot}
+                  </div>
+                ))}
+              </motion.div>
+            )}
+          </AnimatePresence>
         </div>
       )}
-      
+
       {/* Guest Selection */}
-      <div className="mb-4 relative">
+      <div className="mb-4 relative" ref={guestMenuRef}>
         <button
           className="w-full flex justify-between items-center bg-white border border-gray-300 rounded-lg px-4 py-2 text-left focus:outline-none focus:ring-2 focus:ring-pink-500"
           onClick={() => setIsGuestMenuOpen(!isGuestMenuOpen)}
@@ -103,7 +206,7 @@ function Booking({ price, taxes, fees }) {
           <span>{totalGuests} Guest{totalGuests !== 1 ? 's' : ''}</span>
           {isGuestMenuOpen ? <ChevronUpIcon className="h-5 w-5" /> : <ChevronDownIcon className="h-5 w-5" />}
         </button>
-        
+
         <AnimatePresence>
           {isGuestMenuOpen && (
             <motion.div
@@ -143,11 +246,19 @@ function Booking({ price, taxes, fees }) {
           )}
         </AnimatePresence>
       </div>
-      
+
       {/* Price Breakdown */}
       <div className="space-y-2 mb-4">
         <div className="flex justify-between">
-          <span>Base Price:</span>
+          <span>Price per person:</span>
+          <span>${safePrice.toFixed(2)}</span>
+        </div>
+        <div className="flex justify-between">
+          <span>Guests:</span>
+          <span>{guests.adults + guests.children}</span>
+        </div>
+        <div className="flex justify-between">
+          <span>Subtotal:</span>
           <span>${safePrice.toFixed(2)} x {guests.adults + guests.children}</span>
         </div>
         <div className="flex justify-between">

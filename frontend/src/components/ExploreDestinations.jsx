@@ -47,11 +47,11 @@ const ChooseLocation = () => {
   const containerRef = useRef(null);
 
   const nextLocation = useCallback(() => {
-    setCurrentIndex((prevIndex) => Math.min(prevIndex + 1, locations.length - 1));
+    setCurrentIndex((prevIndex) => (prevIndex + 1) % locations.length);
   }, []);
 
   const prevLocation = useCallback(() => {
-    setCurrentIndex((prevIndex) => Math.max(prevIndex - 1, 0));
+    setCurrentIndex((prevIndex) => (prevIndex - 1 + locations.length) % locations.length);
   }, []);
 
   useEffect(() => {
@@ -88,9 +88,9 @@ const ChooseLocation = () => {
     const touchEndX = e.touches[0].clientX;
     const diff = containerRef.current.touchStartX - touchEndX;
     if (Math.abs(diff) > 50) {
-      if (diff > 0 && currentIndex < locations.length - 1) {
+      if (diff > 0) {
         nextLocation();
-      } else if (diff < 0 && currentIndex > 0) {
+      } else if (diff < 0) {
         prevLocation();
       }
       containerRef.current.touchStartX = null;
@@ -123,18 +123,14 @@ const ChooseLocation = () => {
               <LocationCard key={index} location={location} isActive={index === currentIndex} isMobile={isMobile} />
             ))}
           </motion.div>
-          {currentIndex > 0 && (
-            <NavigationButton 
-              direction="left" 
-              onClick={prevLocation}
-            />
-          )}
-          {currentIndex < locations.length - 1 && (
-            <NavigationButton 
-              direction="right" 
-              onClick={nextLocation}
-            />
-          )}
+          <NavigationButton 
+            direction="left" 
+            onClick={prevLocation}
+          />
+          <NavigationButton 
+            direction="right" 
+            onClick={nextLocation}
+          />
         </div>
       </div>
     </div>

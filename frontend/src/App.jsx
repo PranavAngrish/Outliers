@@ -11,6 +11,16 @@ import ExperienceDetails from './components/EXPERIENCES/ExperienceDetails.jsx';
 import udaipur from "/src/assets/outliers/udaipur.jpg";
 import ExploreExperiences from "./components/ExploreExperiences.jsx";
 import ExploreDestinations from './components/ExploreDestinations.jsx';
+import EmailVerify from "./components/EmailVerify/index.jsx";
+import AdminAuthForm from "./components/adminpanel/auth/AdminAuthForm.jsx";
+import { useLocation } from 'react-router-dom';
+import { useState } from "react";
+
+
+import { useEffect } from "react";
+import axios from "axios";
+import VendorSignIn from "./components/vendorSignIn.jsx";
+
 // Add this array of experiences
 const experiences = [
   { 
@@ -68,16 +78,26 @@ const experiences = [
 ];
 
 function App() {
+  useEffect(()=>{
+    console.log("App component mounted");
+  })
+
+  console.log("We are here")
+
   return (
+
     <Router>
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/auth" element={<AuthForm />} />
+        <Route path="/adminauth" element={<AdminAuthForm />} />
         <Route path="/vendor" element={<Vendor />} />
         <Route path="/admin" element={<Admin />} />
         <Route path="/host" element={<Host />} />
+        <Route path='/vendor-signin' element={<VendorSignIn/>}></Route>
+        <Route path="/user/:id/verify/:token" element={<EmailVerify/>}></Route>
         <Route 
-          path="/experience/:experienceName" 
+          path="/experience/:experienceId" 
           element={<ExperienceDetails experiences={experiences} />} 
         />
       </Routes>
@@ -86,9 +106,43 @@ function App() {
 }
 
 function Home() {
+  const navItems = ["Experiences", "Destinations", "Gallery", "Contact Us"];
+  
+  
+  console.log("Home component mounted");
+  
+//   useEffect(()=>{
+//     const seedData = async () => {
+//     try{
+//       console.log("Seeding data...");
+//       const demoData = await axios.put('/api/seed/add-demo-experiences');
+//       console.log(demoData);
+//     }
+//     catch(error){
+//       console.error('Error adding demo experiences:', error.response?.data || error.message);
+
+//     }
+
+//   }
+//   seedData();
+// } 
+//   ,[]);
+  // useEffect(()=>{
+  //   const vendorData = async () => {
+  //     try{
+  //       console.log("Adding vendor data...");
+  //       const demoData = await axios.post('/api/seed/add-demo-vendors');
+  //       console.log(demoData);
+  //     }
+  //     catch(error){
+  //       console.error('Error adding demo vendors:', error.response?.data || error.message);
+  //     }
+  //   }
+  //   vendorData();
+  // })
   return (
     <div className="min-h-screen w-full">
-      <FirstPage />
+      <FirstPage navItems={navItems}/>
       <ExploreExperiences experiences={experiences} />
       <ExploreDestinations />
       <Gallery />

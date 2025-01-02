@@ -7,22 +7,53 @@ import jaisalmer from "/src/assets/outliers/jaisalmer.jpg";
 import udaipur from "/src/assets/outliers/udaipur.jpg";
 import bikaner from "/src/assets/outliers/bikaner.jpg";
 import ajmer from "/src/assets/outliers/Ajmer.jpg";
+import api from '../axios/axios.js';
 
 function ExploreExperiences() {
   const navigate = useNavigate();
+  const [data,setData] = useState([]);
 
-  const exploreExperiences = [
-    { name: 'Jaipur Bike Tour', rating: 4.8, image: jaipur, type: 'Bike Riding' },
-    { name: 'Jodhpur Heritage Walk', rating: 4.9, image: jodhpur, type: 'Walking Tour' },
-    { name: 'Jaisalmer Desert Safari', rating: 4.9, image: jaisalmer, type: 'Adventure' },
-    { name: 'Udaipur Cooking Class', rating: 4.8, image: udaipur, type: 'Culinary' },
-    { name: 'Bikaner Camel Ride', rating: 4.7, image: bikaner, type: 'Adventure' },
-    { name: 'Ajmer Dargah Visit', rating: 4.8, image: ajmer, type: 'Cultural' },
-    { name: 'Pushkar Yoga Retreat', rating: 4.7, image: ajmer, type: 'Wellness' },
-    { name: 'Mount Abu Nature Walk', rating: 4.6, image: '/src/assets/outliers/mount_abu.jpg', type: 'Nature' },
-    { name: 'Chittorgarh Fort Tour', rating: 4.8, image: '/src/assets/outliers/chittorgarh.jpg', type: 'Historical' },
-    { name: 'Farm to Table Experience', rating: 4.8, image: '/src/assets/outliers/chittorgarh.jpg', type: 'Culinary' },
-  ];
+  useEffect(()=>{
+    const dataCall = async () => {
+      console.log('We are in the data cAll');
+      try{
+        console.log("Fetching data...");
+        const response = await api.get('/experiences/random');
+        setData(response.data);
+        console.log(response.data);
+      }
+      catch(error){
+        console.error('Error fetching data:', error.response?.data || error.message);
+      }
+
+    }
+    dataCall();
+  },[]);
+
+  const exploreExperiences = 
+    data.map((experience,index) => {
+      return { 
+        id : experience._id,
+        name: experience.title, 
+        rating: experience.rating, 
+        image: experience?.images[0], 
+        type: experience.category 
+      }
+    })
+  
+
+  // const exploreExperiences = [
+  //   { name: 'Jaipur Bike Tour', rating: 4.8, image: jaipur, type: 'Bike Riding' },
+  //   { name: 'Jodhpur Heritage Walk', rating: 4.9, image: jodhpur, type: 'Walking Tour' },
+  //   { name: 'Jaisalmer Desert Safari', rating: 4.9, image: jaisalmer, type: 'Adventure' },
+  //   { name: 'Udaipur Cooking Class', rating: 4.8, image: udaipur, type: 'Culinary' },
+  //   { name: 'Bikaner Camel Ride', rating: 4.7, image: bikaner, type: 'Adventure' },
+  //   { name: 'Ajmer Dargah Visit', rating: 4.8, image: ajmer, type: 'Cultural' },
+  //   { name: 'Pushkar Yoga Retreat', rating: 4.7, image: ajmer, type: 'Wellness' },
+  //   { name: 'Mount Abu Nature Walk', rating: 4.6, image: '/src/assets/outliers/mount_abu.jpg', type: 'Nature' },
+  //   { name: 'Chittorgarh Fort Tour', rating: 4.8, image: '/src/assets/outliers/chittorgarh.jpg', type: 'Historical' },
+  //   { name: 'Farm to Table Experience', rating: 4.8, image: '/src/assets/outliers/chittorgarh.jpg', type: 'Culinary' },
+  // ];
 
   const experienceTypes = ['Bike Riding', 'Walking Tour', 'Adventure', 'Culinary', 'Cultural', 'Wellness', 'Nature', 'Historical'];
   const [startIndex, setStartIndex] = useState(0);
@@ -96,9 +127,13 @@ function ExploreExperiences() {
   };
 
   const handleTypeClick = (type) => {
+    console.log("We are in the handleTypeClick");
+    console.log(typeof(type));
     setSelectedType(type);
     setCardStartIndex(0);
     setVisibleCards(6);
+    console.log("The selected type is as following");
+    console.log(selectedType);
   };
 
   const showAllExperiences = () => {
@@ -108,11 +143,15 @@ function ExploreExperiences() {
   };
 
   const filteredExperiences = selectedType
-    ? exploreExperiences.filter(experience => experience.type === selectedType)
+    ? exploreExperiences.filter(experience => experience.type === selectedType.toLowerCase())
     : exploreExperiences;
 
-  const handleExperienceClick = (experienceName) => {
-    navigate(`/experience/${experienceName.toLowerCase().replace(/\s+/g, '-')}`);
+  const handleExperienceClick = (experienceId) => {
+    console.log("We are in the handleclick");
+    console.log(experienceId);
+
+    console.log(`/experience/${experienceId}`)
+    navigate(`/experience/${experienceId}`);
   };
 
   const renderExploreCards = () => {
@@ -130,7 +169,7 @@ function ExploreExperiences() {
               <div 
                 key={index} 
                 className="flex-shrink-0 w-full rounded-lg overflow-hidden shadow-lg hover:shadow-xl transition duration-300 transform hover:scale-105 bg-white"
-                onClick={() => handleExperienceClick(experience.name)}
+                onClick={() => handleExperienceClick(experience.id)}
               >
                 <img src={experience.image} alt={experience.name} className="w-full h-48 object-cover" />
                 <div className="p-4">
@@ -169,7 +208,7 @@ function ExploreExperiences() {
               <div 
                 key={index} 
                 className="rounded-lg overflow-hidden shadow-lg hover:shadow-xl transition duration-300 transform hover:scale-105 bg-white cursor-pointer"
-                onClick={() => handleExperienceClick(experience.name)}
+                onClick={() => handleExperienceClick(experience.id)}
               >
                 <img src={experience.image} alt={experience.name} className="w-full h-40 sm:h-48 object-cover" />
                 <div className="p-4">
@@ -203,6 +242,9 @@ function ExploreExperiences() {
       );
     }
   };
+
+  console.log("The fetched Data is as following");
+  console.log(exploreExperiences);
 
   return (
     <div ref={sectionRef} className="py-12 md:py-20 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto">

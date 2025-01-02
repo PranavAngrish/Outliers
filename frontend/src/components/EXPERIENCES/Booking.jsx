@@ -1,15 +1,18 @@
 // Booking.jsx
 import React, { useState, useEffect } from 'react';
+import { useSelector } from 'react-redux'
 import { motion, AnimatePresence } from 'framer-motion';
 import { ChevronDownIcon, ChevronUpIcon } from '@heroicons/react/solid';
+import api from '../../axios/axios.js';
 
-function Booking({ price, taxes, fees }) {
+function Booking({ price, taxes, fees, timeSlots, experienceId , vendorId }) {
   const [guests, setGuests] = useState({ adults: 1, children: 0, infants: 0 });
   const [isGuestMenuOpen, setIsGuestMenuOpen] = useState(false);
   const [selectedDate, setSelectedDate] = useState(null);
   const [selectedTimeSlot, setSelectedTimeSlot] = useState(null);
   const [availableDates, setAvailableDates] = useState([]);
   const [availableTimeSlots, setAvailableTimeSlots] = useState([]);
+  const userId = useSelector(state => state.user.currentUser?._id);
 
   const safePrice = Number(price) || 0;
   const safeTaxes = Number(taxes) || 0;
@@ -17,32 +20,99 @@ function Booking({ price, taxes, fees }) {
   const total = (safePrice * (guests.adults + guests.children)) + safeTaxes + safeFees;
 
   useEffect(() => {
-    // Fetch available dates from backend
-    fetchAvailableDates();
+    // Extract Date
+    setAvailableDates(
+      timeSlots.map(dateTime => {
+        
+        const date = dateTime.split('T')[0]; // 'YYYY-MM-DD'
+        return  date ;
+      })
+    )
+    // Extract Time
+    setAvailableTimeSlots(
+      timeSlots.map(dateTime => {
+        const time = dateTime.split('T')[1]; // 'HH:MM:SS'
+        return time ;
+      })
+    )
   }, []);
 
-  useEffect(() => {
-    // Fetch available time slots when a date is selected
-    if (selectedDate) {
-      fetchAvailableTimeSlots(selectedDate);
+  useEffect(()=>{
+    console.log("The available dates and time slots are ",availableDates,availableTimeSlots)
+
+  },[availableDates,availableTimeSlots])
+
+  const combineDateTime = (selectedDate , selectedTimeSlot) => {
+    const dateTime = `${selectedDate}T${selectedTimeSlot}`;
+    const combined = new Date(dateTime);
+    return combined;
+  }
+
+  const handleBooking = async () => {
+    const ageOfPeople = [];
+    Object.entries(guests).forEach(([type, count]) => {
+      if (type === 'adults') {
+          // Assume adult age is 13+
+          for (let i = 0; i < count; i++) {
+              ageOfPeople.push(13);
+          }
+      } else if (type === 'children') {
+          // Assume children age is 2-12
+          for (let i = 0; i < count; i++) {
+              ageOfPeople.push(5); // Example age
+          }
+      } else if (type === 'infants') {
+          // Assume infant age is under 2
+          for (let i = 0; i < count; i++) {
+              ageOfPeople.push(1); // Example age
+          }
+      }
+  });
+    try{
+      
+      const booked = await api.post('/experiences/createBooking',{
+        user:userId,
+        experienceId: experienceId, 
+        numberOfPeople: totalGuests, 
+        remarks, 
+        ageOfPeople: ageOfPeople, 
+        addOns, 
+        dateTime: combineDateTime(selectedDate, selectedTimeSlot),
+        vendorId: vendorId
+      })
+
     }
-  }, [selectedDate]);
+    catch(error){
+      console.error('Error booking experience:', error.response?.data || error.message)
+    }
 
-  const fetchAvailableDates = async () => {
-    // TODO: Replace with actual API call
-    const mockDates = [
-      '2024-08-06', '2024-08-07', '2024-08-08', '2024-08-09', '2024-08-10'
-    ];
-    setAvailableDates(mockDates);
-  };
+  }
 
-  const fetchAvailableTimeSlots = async (date) => {
-    // TODO: Replace with actual API call
-    const mockTimeSlots = [
-      '09:00 AM', '11:00 AM', '02:00 PM', '04:00 PM'
-    ];
-    setAvailableTimeSlots(mockTimeSlots);
-  };
+
+
+
+  // useEffect(() => {
+  //   // Fetch available time slots when a date is selected
+  //   if (selectedDate) {
+  //     fetchAvailableTimeSlots(selectedDate);
+  //   }
+  // }, [selectedDate]);
+
+  // const fetchAvailableDates = async () => {
+  //   // TODO: Replace with actual API call
+  //   const mockDates = [
+  //     '2024-08-06', '2024-08-07', '2024-08-08', '2024-08-09', '2024-08-10'
+  //   ];
+  //   setAvailableDates(mockDates);
+  // };
+
+  // const fetchAvailableTimeSlots = async (date) => {
+  //   // TODO: Replace with actual API call
+  //   const mockTimeSlots = [
+  //     '09:00 AM', '11:00 AM', '02:00 PM', '04:00 PM'
+  //   ];
+  //   setAvailableTimeSlots(mockTimeSlots);
+  // };
 
   const handleGuestChange = (type, change) => {
     setGuests(prevGuests => ({
@@ -167,7 +237,7 @@ function Booking({ price, taxes, fees }) {
       {/* Book Now Button */}
       <button
         className="w-full bg-pink-500 text-white py-3 rounded-lg font-semibold hover:bg-pink-600 transition duration-300 disabled:bg-gray-400 disabled:cursor-not-allowed"
-        onClick={() => alert('Booking functionality to be implemented')}
+        onClick={handleBooking}
         disabled={!selectedDate || !selectedTimeSlot}
       >
         Book Now

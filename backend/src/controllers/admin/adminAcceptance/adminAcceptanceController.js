@@ -10,8 +10,9 @@ import { UpdatedExperience } from '../../../models/updatedExperience.model.js';
 // Admin: Accept Vendor
 export const acceptVendor = async (req, res) => {
     try {
+        console.log("acceptVendor?")
         const { vendorId } = req.params; // Get vendorId from route parameters
-
+        
         // Find the vendor by ID and update the verification status to 'accepted'
         const vendor = await Vendor.findByIdAndUpdate(vendorId, { verificationStatus: 'accepted' }, { new: true });
 
@@ -21,7 +22,8 @@ export const acceptVendor = async (req, res) => {
 
         res.status(200).json({ message: 'Vendor accepted successfully' });
     } catch (error) {
-        res.status(500).json({ error: error.message });
+        console.log("what is it",error);
+        res.status(500).json({ error: error });
     }
 };
 

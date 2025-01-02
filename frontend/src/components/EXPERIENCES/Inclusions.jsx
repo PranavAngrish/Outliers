@@ -3,6 +3,7 @@ import { motion } from 'framer-motion';
 import { CheckCircleIcon } from '@heroicons/react/solid';
 
 function Inclusions({ inclusions }) {
+  console.log("The inclusions are ", inclusions);
   return (
     <motion.div 
       className="mb-12"

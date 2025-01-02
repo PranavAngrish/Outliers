@@ -1,6 +1,11 @@
 import mongoose , {Schema} from "mongoose";
 
 const userSchema = new Schema({
+    googleSignIn:{
+        type: Boolean,
+        required: true,
+        default: false,
+    },
     name:{
         type: String,
         required: true,
@@ -21,12 +26,7 @@ const userSchema = new Schema({
         lowercase: true,
         trim: true
     },
-    age:{
-        type: Number,
-        required: true,
-        trim: true
-    },
-    phoneNumber:{
+    contactnumber:{
         type: Number,
         required: true,
         unique: true,
@@ -42,8 +42,8 @@ const userSchema = new Schema({
     },
     password:{
         type: String,
-        required: true,
-        trim: true
+        trim: true,
+        default: ""
     },
     acceptedBookings:[{
         type: Schema.Types.ObjectId,
@@ -63,6 +63,10 @@ const userSchema = new Schema({
         trim: true,
         minlength: 2,
         maxlength: 100
+    },
+    verified:{
+        type: Boolean,
+        default: false
     }
 },{
     timestamps: true

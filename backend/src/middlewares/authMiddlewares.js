@@ -8,25 +8,36 @@ const jwtSecret = 'your_jwt_secret'; // Use environment variable in production
 
 
 
+
+
 // Middleware to authenticate and authorize admin 
 export const authenticateAndAuthorizeAdmin = async (req, res, next) => {
+    console.log("we are in the function");
+    const authHeader = req.header('Authorization');
+    console.log("Testi",authHeader);
     const token = req.header('Authorization').replace('Bearer ', '');
 
+
     if (!token) {
+        console.log("Not token?");
         return res.status(401).json({ message: 'No token, authorization denied' });
     }
 
     try {
+        console.log("In token");
         const decoded = jwt.verify(token, jwtSecret);
-        const admin = await Admin.findById(decoded.adminId);
-
+        console.log("decodedd",decoded);
+        const admin = await Admin.findById(decoded.userId);
+        console.log("Admin founnd",admin);
         if (!admin) {
             return res.status(401).json({ message: 'Authorization denied: admin not found' });
         }
 
         req.admin = admin;
+        console.log("leaving");
         next();
     } catch (error) {
+        console.log("The error iss:",error);
         res.status(401).json({ message: 'Token is not valid' });
     }
 };
@@ -34,6 +45,7 @@ export const authenticateAndAuthorizeAdmin = async (req, res, next) => {
 
 // Middleware to authenticate and authorize vendor
 export const authenticateAndAuthorizeVendor = async (req, res, next) => {
+    
     const token = req.header('Authorization').replace('Bearer ', '');
 
     if (!token) {
@@ -42,13 +54,14 @@ export const authenticateAndAuthorizeVendor = async (req, res, next) => {
 
     try {
         const decoded = jwt.verify(token, jwtSecret);
-        const vendor = await Vendor.findById(decoded.vendorId);
+        const vendor = await Vendor.findById(decoded.userId);
 
         if (!vendor) {
             return res.status(401).json({ message: 'Authorization denied: admin not found' });
         }
 
         req.vendor = vendor;
+        console.log("Leaving vendor auth");
         next();
     } catch (error) {
         res.status(401).json({ message: 'Token is not valid' });
@@ -101,6 +114,7 @@ export const authenticateAndAuthorizeAdminOrVendor = async (req, res, next) => {
 
 export const checkUserSignedIn = async (req, res, next) => {
     try {
+       
         // Get the token from the Authorization header
         const token = req.header('Authorization').replace('Bearer ', '');
 

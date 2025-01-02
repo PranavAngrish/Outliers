@@ -11,11 +11,15 @@ const jwtExpiry = '1h';
 // Sign up
 export const signUp = async (req, res) => {
     try {
-        const { username, email, phoneNumber, password, city, state, panCardNumber, pancardImage, gstNumber, cancelledCheckImage, ifseCode, accountNumber, branchName } = req.body;
-
-        // Hash the password
+        console.log(req.body);
+        const { username, email, phoneNumber, panCardNumber, gstNumber, password, state, city, accountNumber, ifseCode, branchName} = req.body;
+         // Hash the password
         const hashedPassword = await bcrypt.hash(password, saltRounds);
-
+        const vendor = await Vendor.findOne({ email });
+        if(vendor){
+            return res.status(202).json({message: "A vendor under this email already exists, please logIn to that"});
+        }
+        console.log("Hi");
         // Create new vendor
         const newVendor = new Vendor({
             username,
@@ -25,18 +29,19 @@ export const signUp = async (req, res) => {
             city,
             state,
             panCardNumber,
-            pancardImage,
             gstNumber,
-            cancelledCheckImage,
             ifseCode,
             accountNumber,
             branchName
         });
+        console.log("created");
 
         await newVendor.save();
+        console.log("saved");
 
-        res.status(201).json({ message: 'Vendor created successfully and pending verification' });
+        res.status(201).json({ message: "Your information has been sent to the admin, we will get back to you as soon as we review your profile" });
     } catch (error) {
+        console.log(error.message);
         res.status(500).json({ error: error.message });
     }
 };
@@ -45,9 +50,11 @@ export const signUp = async (req, res) => {
 export const signIn = async (req, res) => {
     try {
         const { email, password } = req.body;
+        console.log("We are in the function");
 
         // Find the vendor by email
         const vendor = await Vendor.findOne({ email });
+
 
         if (!vendor) {
             return res.status(404).json({ message: 'Vendor not found' });
@@ -55,7 +62,8 @@ export const signIn = async (req, res) => {
 
         // Check if vendor is accepted
         if (vendor.verificationStatus !== 'accepted') {
-            return res.status(403).json({ message: 'Vendor not verified' });
+            console.log("Kahan?")
+            return res.status(403).json({ message: 'You are not yet verified by the admin, please be patient while we review your profile' });
         }
 
         // Check password
@@ -73,8 +81,13 @@ export const signIn = async (req, res) => {
         vendor.refreshToken = refreshToken;
         await vendor.save();
 
-        res.status(200).json({ token, refreshToken });
+        // Exclude the password from the user object
+        const { password: _, ...vendorDetails } = vendor.toObject();
+
+
+        res.status(200).json({ token, refreshToken,vendor: vendorDetails });
     } catch (error) {
+        console.log("The error is ", error);
         res.status(500).json({ error: error.message });
     }
 };

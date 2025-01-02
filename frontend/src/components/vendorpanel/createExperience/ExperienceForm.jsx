@@ -13,10 +13,30 @@ const ExperienceForm = ({ experience, setExperience, isVariant }) => {
   };
 
   const handleTimeSlotChange = (index, value) => {
-    const updatedTimeSlots = [...experience.timeSlots];
-    updatedTimeSlots[index] = value;
-    setExperience(prev => ({...prev, timeSlots: updatedTimeSlots}));
+
+     // Assume that the date is today's date for simplicity
+  const today = new Date();
+  
+  // Split the time (HH:MM) into hours and minutes
+  const [hours, minutes] = value.split(':').map(Number);
+
+  // Create a new Date object with the current date and the selected time
+  const dateWithTime = new Date(today.getFullYear(), today.getMonth(), today.getDate(), hours, minutes);
+
+  const updatedTimeSlots = [...experience.timeSlots];
+  updatedTimeSlots[index] = dateWithTime;
+  
+  setExperience(prev => ({...prev, timeSlots: updatedTimeSlots}));
+
   };
+
+  // Helper function to format the Date object into "HH:mm" for displaying in the input field
+const formatTimeForInput = (date) => {
+  const hours = String(date.getHours()).padStart(2, '0');
+  const minutes = String(date.getMinutes()).padStart(2, '0');
+  return `${hours}:${minutes}`;
+};
+
 
   const addTimeSlot = () => {
     setExperience(prev => ({...prev, timeSlots: [...prev.timeSlots, '']}));
@@ -119,34 +139,47 @@ const ExperienceForm = ({ experience, setExperience, isVariant }) => {
       </div>
 
       <div className="mb-4">
-        <label className={labelClass}>Time Slots</label>
-        {experience.timeSlots.map((slot, index) => (
-          <div key={index} className="flex mb-2">
-            <input
-              className={`${inputClass} flex-grow`}
-              type="time"
-              value={slot}
-              onChange={(e) => handleTimeSlotChange(index, e.target.value)}
-              required
-            />
-            {index > 0 && (
-              <button
-                type="button"
-                onClick={() => removeTimeSlot(index)}
-                className="ml-2 text-red-500"
-              >
-                Remove
-              </button>
-            )}
-          </div>
-        ))}
-        <button
-          type="button"
-          onClick={addTimeSlot}
-          className="text-white bg-black hover:bg-gray-800 focus:ring-4 focus:outline-none focus:ring-gray-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center"
-        >
-          Add Time Slot
-        </button>
+    <label className={labelClass}>Time Slots</label>
+    {experience.timeSlots.map((slot, index) => (
+      <div key={index} className="flex mb-2">
+        <input
+          className={`${inputClass} flex-grow`}
+          type="time"
+          value={formatTimeForInput(new Date(slot))}
+          onChange={(e) => handleTimeSlotChange(index, e.target.value)}
+          required
+        />
+        {index > 0 && (
+          <button
+            type="button"
+            onClick={() => removeTimeSlot(index)}
+            className="ml-2 text-red-500"
+          >
+            Remove
+          </button>
+        )}
+      </div>
+    ))}
+    <button
+      type="button"
+      onClick={addTimeSlot}
+      className="text-white bg-black hover:bg-gray-800 focus:ring-4 focus:outline-none focus:ring-gray-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center"
+    >
+      Add Time Slot
+    </button>
+  </div>
+
+      <div className="mb-4">
+        <label className={labelClass} htmlFor="category">Category</label>
+        <input
+          className={inputClass}
+          id="category"
+          type="text"
+          placeholder="Category"
+          value={experience.category}
+          onChange={(e) => handleChange('category', e.target.value)}
+          required
+        />
       </div>
 
       <div className="mb-4">
@@ -158,6 +191,19 @@ const ExperienceForm = ({ experience, setExperience, isVariant }) => {
           placeholder="Max Occupancy Per Slot"
           value={experience.maxOccupancyPerSlot}
           onChange={(e) => handleChange('maxOccupancyPerSlot', e.target.value)}
+          required
+        />
+      </div>
+
+      <div className="mb-4">
+        <label className={labelClass} htmlFor="cancellationPeriod">Cancellation period</label>
+        <input
+          className={inputClass}
+          id="cancellationPeriod"
+          type="number"
+          placeholder="Cancellation period"
+          value={experience.cancellationPeriod}
+          onChange={(e) => handleChange('cancellationPeriod', e.target.value)}
           required
         />
       </div>

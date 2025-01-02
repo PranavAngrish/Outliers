@@ -2,14 +2,6 @@
 import mongoose,{ Schema } from "mongoose";
 
 const adminSchema = new Schema({
-    username:{
-        type:String,
-        required:true,
-        unique:true,
-        lowercase:true,
-        trim:true,
-        index:true
-    },
     email:{
         type:String,
         required:true,
@@ -19,8 +11,17 @@ const adminSchema = new Schema({
     },
     password:{
         type:String,
-        required:true,
+        default:'',
         trim:true
+    },
+    googleSignIn:{
+        type: Boolean,
+        required: true,
+        default: false,
+    },
+    verified:{
+        type:Boolean,
+        default:false
     }
 })
 

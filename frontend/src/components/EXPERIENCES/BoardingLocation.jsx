@@ -16,10 +16,10 @@ function BoardingLocation({ location }) {
       <div className="bg-white rounded-lg shadow-md p-4" style={{ height: '400px', width: '100%' }}>
         <GoogleMapReact
           bootstrapURLKeys={{ key: 'YOUR_GOOGLE_MAPS_API_KEY' }}
-          defaultCenter={location}
+          defaultCenter={location || { lat: 37.7749, lng: -122.4194 }}
           defaultZoom={14}
         >
-          <Marker lat={location.lat} lng={location.lng} />
+          <Marker lat={location?.lat || 37.7749} lng={location?.lng || -122.4194 } />
         </GoogleMapReact>
       </div>
     </motion.div>

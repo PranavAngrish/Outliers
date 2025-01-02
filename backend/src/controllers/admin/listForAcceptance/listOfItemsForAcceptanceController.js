@@ -31,10 +31,13 @@ export const getUpdatedExperiences = async (req, res) => {
 // Function to get all pending vendors
 export const getPendingVendors = async (req, res) => {
     try {
-        const pendingVendors = await Vendor.find({ status: 'pending' }); // Assuming 'status' is a field in your Vendor model
+        console.log("In the getPendingVendors function")
+        const pendingVendors = await Vendor.find({ verificationStatus: 'pending' }); // Assuming 'status' is a field in your Vendor model
         if (!pendingVendors.length) {
+            console.log("Inside if");
             return res.status(404).json({ message: 'No pending vendors found' });
         }
+        console.log("Out of if");
         res.status(200).json(pendingVendors);
     } catch (error) {
         res.status(500).json({ error: error.message });

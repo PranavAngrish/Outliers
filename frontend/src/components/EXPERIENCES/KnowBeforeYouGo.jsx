@@ -12,7 +12,7 @@ function KnowBeforeYouGo({ items }) {
     >
       <h2 className="text-3xl font-semibold mb-6 text-gray-800">Know Before You Go</h2>
       <ul className="space-y-4">
-        {items.map((item, index) => (
+        {items != null && items.map((item, index) => (
           <motion.li 
             key={index} 
             className="flex items-start bg-white rounded-lg shadow-md p-4"

@@ -39,22 +39,14 @@ const vendorSchema = new Schema({
         trim:true
     },
     panCardNumber:{
-        type: Number,
+        type: String,
         required:true,
         trim: true
-    },
-    pancardImage:{
-        type:String,
-        required:true
     },
     gstNumber:{
-        type:Number,
+        type:String,
         required:true,
         trim: true
-    },
-    cancelledCheckImage:{
-        type:String,
-        required:true
     },
     ifseCode:{
         type:String,
@@ -76,6 +68,9 @@ const vendorSchema = new Schema({
         enum:["pending","accepted","rejected"],
         default:"pending",
         index:true
+    },
+    refreshToken:{
+        type:String
     },
     pendingExperiences:[{
         type: Schema.Types.ObjectId,

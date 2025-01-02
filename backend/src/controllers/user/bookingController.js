@@ -1,6 +1,7 @@
 import { PendingBooking } from '../../models/pendingBooking.model.js';
 import { AcceptedBooking } from '../../models/acceptedBooking.model.js';
 import { AcceptedExperience } from '../../models/acceptedExperience.model.js';
+import { PendingExperience } from '../../models/pendingExperience.model.js';
 import { Trip } from '../../models/trip.model.js';
 import { createTrip } from '../vendor/trip/tripController.js';
 
@@ -11,11 +12,17 @@ import { createTrip } from '../vendor/trip/tripController.js';
 export const getExperienceDetails = async (req, res) => {
     try {
         const { experienceId } = req.params; // Get the experience ID from request parameters
+        console.log("We are here again baby")
 
         // Find the experience by ID and populate the vendor details
-        const experience = await AcceptedExperience.findById(experienceId).populate('vendor', 'username email');
+        let experience = await AcceptedExperience.findById(experienceId).populate('vendor', 'username email');
+        console.log("Did we find the experience", experience);
 
         // Check if the experience exists
+        if (experience == null) {
+            experience = await PendingExperience.findById(experienceId).populate('vendor', 'username email');
+            console.log("Now did we find it", experience);
+        }
         if (!experience) {
             return res.status(404).json({ message: 'Experience not found' });
         }

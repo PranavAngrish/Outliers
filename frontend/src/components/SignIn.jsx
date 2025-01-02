@@ -1,6 +1,18 @@
 // SignIn.jsx
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { FaGoogle, FaEye, FaEyeSlash } from 'react-icons/fa';
+import { getAuth, signInWithPopup, GoogleAuthProvider } from "firebase/auth";
+import { app } from '../firebase.js';
+import { useDispatch,useSelector } from 'react-redux'
+import { signInStart,signInSuccess,signInFailure } from '../redux/userSlice.js';
+import { auth } from '../firebase.js';
+import api from '../axios/axios.js';
+import { useNavigate } from 'react-router-dom';
+import { signIn } from '../API/index.js';
+import GoogleLogin from "./GoogleLogin";
+import { useLocation } from 'react-router-dom';
+
+
 
 const InputField = ({ label, type, placeholder, value, onChange, error }) => (
   <div className="mb-4">
@@ -17,6 +29,8 @@ const InputField = ({ label, type, placeholder, value, onChange, error }) => (
     {error && <p className="text-red-500 text-xs italic mt-1">{error}</p>}
   </div>
 );
+
+
 
 const PasswordField = ({ value, onChange, error }) => {
   const [showPassword, setShowPassword] = useState(false);
@@ -47,8 +61,34 @@ const PasswordField = ({ value, onChange, error }) => {
 };
 
 const SignIn = ({ onSignUpClick }) => {
-  const [formData, setFormData] = useState({ email: '', password: '' });
+  const [formData, setFormData] = useState({ email: '', password: '' , authenticationType : ''});
   const [errors, setErrors] = useState({});
+  const [backendError, setBackendError] = useState(null);
+  const [user, setUser] = useState();
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+  const location = useLocation();
+  const queryParams = new URLSearchParams(location.search);
+  const message = queryParams.get('bool');
+  const [popUp,setPopUp] = useState(message);
+
+  useEffect(()=>{
+    if(popUp){
+      alert("Your email has been verified, please signIn again");
+      setPopUp(false);
+    }
+    
+  },[]);
+
+  useEffect(()=>{
+    if(user){
+      dispatch(signInSuccess(user));
+      navigate('/');
+  
+    }
+    
+  },[user]);
+  
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -66,12 +106,42 @@ const SignIn = ({ onSignUpClick }) => {
     return Object.keys(newErrors).length === 0;
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
+    setBackendError(null);
     if (validateForm()) {
-      console.log('Form submitted:', formData);
+      setFormData((prevData)=>({
+        ...prevData,
+        authenticationType:'email-authentication'
+      }))
+      dispatch(signInStart());
+      
+      try {
+        console.log("Lets go");
+  
+        // Await the response directly
+        const response = await signIn(formData);
+        console.log("Response:", response.data);
+  
+        if (response.status === 200) {
+         dispatch(signInSuccess(response.data));
+         navigate('/');
+        } else {
+          console.log("Unexpected response:", response);
+          dispatch(signInFailure({ error: "Unexpected response from server" }));
+        }
+  
+      } catch (error) {
+        setBackendError(error.response?.data?.message || "An error occurred during sign-in.");
+        dispatch(signInFailure(error));
+      }
     }
   };
+
+
+
+
+
 
   return (
     <div className="w-full">
@@ -79,6 +149,7 @@ const SignIn = ({ onSignUpClick }) => {
       <form onSubmit={handleSubmit}>
         <InputField label="Email" type="email" placeholder="Your email" value={formData.email} onChange={handleChange} error={errors.email} />
         <PasswordField value={formData.password} onChange={handleChange} error={errors.password} />
+        {backendError && <p className="text-red-500 text-xs italic mt-1">{backendError}</p>}
         <div className="flex items-center justify-between mb-6">
           <div className="flex items-center">
             <input type="checkbox" id="remember" className="mr-2" />
@@ -96,7 +167,7 @@ const SignIn = ({ onSignUpClick }) => {
         <div className="flex-grow border-t border-gray-300"></div>
       </div>
       <button className="w-full bg-white hover:bg-gray-100 text-gray-800 font-semibold py-2 px-4 border border-gray-400 rounded shadow flex items-center justify-center transition duration-300">
-        <FaGoogle className="mr-2" /> Sign in with Google
+        <FaGoogle className="mr-2" /> <GoogleLogin setUser={setUser}></GoogleLogin>
       </button>
       <p className="text-center mt-6 text-sm">
         Don't have an account? {' '}

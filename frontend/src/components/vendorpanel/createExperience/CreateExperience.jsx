@@ -2,8 +2,11 @@ import React, { useState } from 'react';
 import ExperienceForm from './ExperienceForm';
 import VariantForm from './VariantForm';
 import VariantPreview from './VariantPreview';
+import api from '../../../axios/axios.js';
+import { useSelector } from 'react-redux';
 
 const CreateExperience = ({ setPendingExperiences, setIsCreatingExperience }) => {
+  const vendorId = useSelector(state=>state.vendor.currentVendor.vendor._id);
   const initialExperience = {
     name: '',
     description: '',
@@ -11,7 +14,7 @@ const CreateExperience = ({ setPendingExperiences, setIsCreatingExperience }) =>
     location: { state: '', city: '' },
     startDate: '',
     endDate: '',
-    timeSlots: [''],
+    timeSlots: [],
     maxOccupancyPerSlot: '',
     duration: '',
     overview: '',
@@ -26,15 +29,32 @@ const CreateExperience = ({ setPendingExperiences, setIsCreatingExperience }) =>
     taxes: '',
     fees: '',
     variants: [],
+    vendor: vendorId,
+    cancellationPeriod: 0,
+    category: ''
   };
 
   const [experience, setExperience] = useState(initialExperience);
   const [isCreatingVariant, setIsCreatingVariant] = useState(false);
   const [editingVariantIndex, setEditingVariantIndex] = useState(null);
 
-  const handleSaveExperience = (e) => {
+  const handleSaveExperience =async (e) => {
     e.preventDefault();
-    setPendingExperiences(prevExperiences => [...prevExperiences, { ...experience, id: Date.now(), status: 'Pending' }]);
+    const token = localStorage.getItem('authToken');
+    try{
+      console.log("THE EXPERIENCE SENT IS AS FOLLOW",experience);
+      const response = await api.post('/experiences/create-experience',experience,{
+        headers: {
+          'Authorization': `Bearer ${token}`
+      }
+       });
+      console.log("The experience has been stored");
+    }
+    catch(error){
+      console.error('Error creating experience:', error.response?.data || error.message);
+    }
+   
+
     setIsCreatingExperience(false);
   };
 

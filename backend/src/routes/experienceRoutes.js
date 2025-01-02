@@ -10,14 +10,17 @@ import { createTrip } from '../controllers/vendor/trip/tripController.js';
 import { getExperiencesByCategory, getExperiencesByState, getRandomExperiences } from '../controllers/listOfViews/viewExperiences.js';
 import { getExperienceDetails } from '../controllers/user/bookingController.js';
 import { createPendingBooking } from '../controllers/user/bookingController.js';
+
+
 const router = express.Router();
 
+
 // Route to get experiences by category
-router.get('/experiences/category', getExperiencesByCategory);
+router.get('/category', getExperiencesByCategory);
 // Route to get experiences by state
-router.get('/experiences/state', getExperiencesByState);
+router.get('/state', getExperiencesByState);
 // Route to get random experiences
-router.get('/experiences/random', getRandomExperiences);
+router.get('/random', getRandomExperiences);
 
 // Route to get experience details by ID
 router.get('/experiences/:experienceId', getExperienceDetails);

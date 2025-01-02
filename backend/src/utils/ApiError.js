@@ -7,6 +7,8 @@ class ApiError extends Error {
     ){
         super(message)
         this.statusCode = statusCode
+        this.status = `${statusCode}`.startsWith('4') ? 'Fail' : 'Error';
+        this.isOperational = true;
         this.data = null
         this.message = message
         this.success = false;

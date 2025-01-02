@@ -11,7 +11,7 @@ function Itinerary({ itinerary }) {
     >
       <h2 className="text-3xl font-semibold mb-6 text-gray-800">Itinerary</h2>
       <ol className="space-y-4">
-        {itinerary.map((item, index) => (
+        {itinerary != null && itinerary.map((item, index) => (
           <motion.li 
             key={index} 
             className="flex items-center bg-white rounded-lg shadow-md p-4"

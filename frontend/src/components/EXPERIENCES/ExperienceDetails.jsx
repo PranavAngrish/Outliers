@@ -16,12 +16,31 @@ import BoardingLocation from './BoardingLocation';
 import SimilarExperiences from './SimilarExperiences';
 import Booking from './Booking';
 import Footer from '../Footer';
+import { useEffect,useState } from 'react';
+import axios from 'axios';
 
 function ExperienceDetails({ experiences }) {
-  const { experienceName } = useParams();
-  const experience = experiences.find(exp => exp.name.toLowerCase().replace(/\s+/g, '-') === experienceName);
+  const { experienceId } = useParams();
+  const [experienceDetails, setExperienceDetails] = useState(null);
+  useEffect(()=>{
+    const getDetails = async () => {
+      try{
+        const experience = await axios.get(`/api/experiences/experiences/${experienceId}`);
+        console.log(experience);
+        setExperienceDetails(experience.data);
 
-  if (!experience) {
+      }
+      catch(error){
+        console.error('Error getting experience details:', error.response?.data || error.message)
+        }
+    }
+
+    getDetails();
+
+  },[])
+
+  
+  if (!experienceDetails) {
     return <div className="text-center py-10">Experience not found</div>;
   }
 
@@ -34,28 +53,31 @@ function ExperienceDetails({ experiences }) {
           animate={{ y: 0 }}
           transition={{ type: "spring", stiffness: 100 }}
         >
-          {experience.name}
+          {experienceDetails.name}
         </motion.h1>
         <div className="flex flex-col lg:flex-row lg:space-x-8">
           <div className="lg:w-2/3">
-            <Gallery gallery={experience.gallery} name={experience.name} />
-            <LocationDuration location={experience.location} duration={experience.duration} />
-            <Overview overview={experience.overview} />
-            <Itinerary itinerary={experience.itinerary} />
-            <Highlights highlights={experience.highlights} />
-            <Inclusions inclusions={experience.inclusions} />
-            <Variants variants={experience.variants} />
-            <CancellationPolicy policy={experience.cancellationPolicy} />
-            <KnowBeforeYouGo items={experience.knowBeforeYouGo} />
-            <FAQ faq={experience.faq} />
-            <BoardingLocation location={experience.boardingLocation} />
-            <SimilarExperiences experiences={experience.similarExperiences} />
+            <Gallery gallery={experienceDetails?.images} name={experienceDetails?.title} />
+            <LocationDuration state={experienceDetails.state} city={experienceDetails.city} duration={experienceDetails?.duration||0} />
+            <Overview overview={experienceDetails?.description} />
+            <Itinerary itinerary={experienceDetails?.itinerary||null} />
+            <Highlights highlights={experienceDetails?.highlights||null} />
+            <Inclusions inclusions={experienceDetails?.addOns} />
+            <Variants variants={experienceDetails?.variants||null} />
+            <CancellationPolicy policy={experienceDetails?.cancellationPolicy} />
+            <KnowBeforeYouGo items={experienceDetails?.knowBeforeYouGo || null} />
+            <FAQ faq={experienceDetails?.faq || null} />
+            <BoardingLocation location={experienceDetails?.boardingLocation || null} />
+            <SimilarExperiences experiences={experienceDetails?.similarExperiences || null} />
           </div>
           <div className="lg:w-1/3 mt-8 lg:mt-0">
             <Booking 
-              price={experience.price || 0} 
-              taxes={experience.taxes || 0} 
-              fees={experience.fees || 0} 
+              price={experienceDetails.price || 0} 
+              taxes={experienceDetails.taxes || 0} 
+              fees={experienceDetails.fees || 0} 
+              timeSlots={experienceDetails.timeSlots || null}
+              experienceId={experienceDetails._id}
+              vendorId={experienceDetails.vendor}
             />
           </div>
         </div>

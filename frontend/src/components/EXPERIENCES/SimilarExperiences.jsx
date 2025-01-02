@@ -4,7 +4,7 @@ import { motion } from 'framer-motion';
 import { ArrowRightIcon } from '@heroicons/react/solid';
 
 function SimilarExperiences({ experiences }) {
-  if (experiences.length === 0) return null;
+  if (experiences == null && experiences?.length === 0) return null;
 
   return (
     <motion.div 
@@ -15,7 +15,7 @@ function SimilarExperiences({ experiences }) {
     >
       <h2 className="text-3xl font-semibold mb-6 text-gray-800">Similar Experiences</h2>
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-        {experiences.map((exp, index) => (
+        {experiences != null && experiences.map((exp, index) => (
           <motion.div 
             key={index} 
             className="bg-white rounded-lg overflow-hidden shadow-lg hover:shadow-xl transition-shadow duration-300"

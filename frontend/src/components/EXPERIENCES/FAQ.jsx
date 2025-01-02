@@ -13,7 +13,7 @@ function FAQ({ faq }) {
     >
       <h2 className="text-3xl font-semibold mb-6 text-gray-800">FAQ</h2>
       <div className="space-y-4">
-        {faq.map((item, index) => (
+        {faq != null && faq.map((item, index) => (
           <Disclosure as="div" key={index} className="bg-white rounded-lg shadow-md">
             {({ open }) => (
               <>

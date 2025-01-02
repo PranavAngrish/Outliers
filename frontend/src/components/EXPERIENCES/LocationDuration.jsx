@@ -1,7 +1,7 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 
-function LocationDuration({ location, duration }) {
+function LocationDuration({ state,city, duration }) {
   return (
     <motion.div 
       className="flex flex-wrap mb-12 bg-white rounded-lg shadow-md p-6"
@@ -11,7 +11,7 @@ function LocationDuration({ location, duration }) {
     >
       <div className="w-full md:w-1/2 flex items-center mb-4 md:mb-0">
         <span className="text-2xl text-pink-500 mr-2" aria-hidden="true">📍</span>
-        <span className="text-gray-700">{location}</span>
+        <span className="text-gray-700">{state} {city}</span>
       </div>
       <div className="w-full md:w-1/2 flex items-center">
         <span className="text-2xl text-pink-500 mr-2" aria-hidden="true">⏱️</span>

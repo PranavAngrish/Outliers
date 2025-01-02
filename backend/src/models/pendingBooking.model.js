@@ -27,11 +27,11 @@ const pendingBookingSchema = new Schema({
         type: Schema.Types.ObjectId,
         ref: "Payment"
     },
-    trip:{
-        type: Schema.Types.ObjectId,
-        ref: "Trip",
-        index: true
-    },
+    // trip:{
+    //     type: Schema.Types.ObjectId,
+    //     ref: "Trip",
+    //     index: true
+    // },
     dateTime:{
         type: Date,
         required: true

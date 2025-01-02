@@ -1,24 +1,68 @@
-import React, { useState } from 'react';
+import React, { useState,useEffect } from 'react';
 import { FaEye, FaLink, FaEdit, FaTrash, FaPlus, FaPauseCircle } from 'react-icons/fa';
 import CreateExperience from './createExperience/CreateExperience';
-
+import { useSelector } from 'react-redux';
+import api from '../../axios/axios.js';
+import { useNavigate } from 'react-router-dom';
 const ExperienceManagement = ({ setActiveMenu, setSelectedVendor }) => {
+  const vendorId = useSelector(state=>state.vendor.currentVendor.vendor._id);
+  const navigate = useNavigate();
+  
   const [experiences, setExperiences] = useState([
-    { id: 1, name: 'Floating Feni Experience', status: 'Live', bookings: 618 },
-    { id: 2, name: 'Slaves and Sultans of Qutub with Shah Umar', status: 'Live', bookings: 28 },
-    { id: 3, name: 'One Heart, Two Worlds: A Walk of Jew Town', status: 'Live', bookings: 13 },
-    { id: 4, name: 'A Day Trip to Kracadawna Farm', status: 'Live', bookings: 0 },
-    { id: 7, name: "Exploring Sultan Ghari - Delhi's First Mausoleum", status: 'Live', bookings: 21 },
+    { id: 0, name: '', status: '' }
   ]);
 
   const [pendingExperiences, setPendingExperiences] = useState([
-    { id: 5, name: 'Of Rains, Rivers and Root Bridges, Meghalaya', status: 'Pending' },
-    { id: 6, name: 'Of Valleys and Warriors, an Angami Chapter, Nagaland', status: 'Pending' },
+    { id: 0, name: '', status: '' },
+    
   ]);
 
   const [searchTerm, setSearchTerm] = useState('');
   const [pendingSearchTerm, setPendingSearchTerm] = useState('');
   const [isCreatingExperience, setIsCreatingExperience] = useState(false);
+
+  useEffect(() =>{
+    const funcAccept = async () => {
+      
+      console.log("We are in the useEffect to call all the experiences");
+      const token = localStorage.getItem('authToken');
+    try{
+      console.log("Try func");
+       const accepted = await api.get(`/vendors/${vendorId}/accepted-experiences`,{
+        headers: {
+          'Authorization': `Bearer ${token}`
+      }
+       })
+       const pending = await api.get(`/vendors/${vendorId}/pending-experiences`,{
+        headers: {
+          'Authorization': `Bearer ${token}`
+      }
+       })
+        const formattedAcceptedExperiences = accepted.data.map(experience => ({
+          id: experience._id, // Adjust according to the API response field name
+          name: experience.title, // Adjust according to the API response field name
+          status: experience?.status || null, // Adjust according to the API response field name
+           // Adjust according to the API response field name
+      }));
+
+      const formattedPendingExperiences = pending.data.map(experience => ({
+        id: experience._id, // Adjust according to the API response field name
+        name: experience.title, // Adjust according to the API response field name
+        status: experience?.status || null, // Adjust according to the API response field name
+         // Adjust according to the API response field name
+    }));
+
+
+        setExperiences(formattedAcceptedExperiences);
+        setPendingExperiences(formattedPendingExperiences);
+    }
+    catch(error){
+      console.error('Error getting experience details:', error.response?.data || error.message);
+    }
+    }
+    funcAccept();
+    
+  },[])
 
   const handleSearch = (e, isPending = false) => {
     isPending ? setPendingSearchTerm(e.target.value) : setSearchTerm(e.target.value);
@@ -44,6 +88,11 @@ const ExperienceManagement = ({ setActiveMenu, setSelectedVendor }) => {
     setIsCreatingExperience(false);
   };
 
+  const handleClickForLinks = (exp) => {
+    navigate(`/experience/${exp.id}`);
+
+  }
+
   const ExperienceTable = ({ experiences, isPending }) => (
     <table className="w-full bg-white shadow-md rounded-lg overflow-hidden">
       <thead className="bg-gray-50">
@@ -51,7 +100,7 @@ const ExperienceManagement = ({ setActiveMenu, setSelectedVendor }) => {
           <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Experiences</th>
           <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Links</th>
           <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
-          {!isPending && <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Bookings</th>}
+          {/* {!isPending && <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Bookings</th>} */}
           {!isPending && <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Action</th>}
         </tr>
       </thead>
@@ -60,8 +109,10 @@ const ExperienceManagement = ({ setActiveMenu, setSelectedVendor }) => {
           <tr key={exp.id}>
             <td className="px-6 py-4 whitespace-nowrap">{exp.name}</td>
             <td className="px-6 py-4 whitespace-nowrap">
-              <FaEye className="inline mr-2 cursor-pointer text-gray-600 hover:text-gray-900 text-xl" />
-              <FaLink className="inline cursor-pointer text-gray-600 hover:text-gray-900 text-xl" />
+              <FaEye className="inline mr-2 cursor-pointer text-gray-600 hover:text-gray-900 text-xl"
+               onClick={()=>handleClickForLinks(exp)} />
+              <FaLink  onClick={()=>handleClickForLinks(exp)} className="inline cursor-pointer text-gray-600 hover:text-gray-900 text-xl"
+                />
             </td>
             <td className="px-6 py-4 whitespace-nowrap">
               <span className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${
@@ -70,7 +121,7 @@ const ExperienceManagement = ({ setActiveMenu, setSelectedVendor }) => {
                 {exp.status}
               </span>
             </td>
-            {!isPending && (
+            {/* {!isPending && (
               <td className="px-6 py-4 whitespace-nowrap">
                 {exp.bookings > 0 ? (
                   <span className="text-blue-600 hover:text-blue-900 cursor-pointer">{exp.bookings} bookings</span>
@@ -78,7 +129,7 @@ const ExperienceManagement = ({ setActiveMenu, setSelectedVendor }) => {
                   'No bookings'
                 )}
               </td>
-            )}
+            )} */}
             {!isPending && (
               <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
                 <button onClick={() => handleAction('edit', exp.id)} className="text-blue-600 hover:text-blue-900 mr-2">
